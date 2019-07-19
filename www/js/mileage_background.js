@@ -92,7 +92,7 @@ function initializeMap() {
 
 
 function setCurrentLocation(location) {
-    //storeLocationServer(location);
+    storeLocationServer(location);
 
     core.log('[DEBUG] location recieved');
     map = new google.maps.Map(document.getElementsByClassName('mapcanvas')[0], mapOptions);
