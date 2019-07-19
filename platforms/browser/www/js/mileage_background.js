@@ -42,7 +42,7 @@ function initializeMap() {
             // handle your locations here
             // to perform long running operation on iOS
             // you need to create background task
-            setCurrentLocation(location);
+             setCurrentLocation(location);
             BackgroundGeolocation.startTask(function (taskKey) {
                 // execute long running task
                 // eg. ajax post location
