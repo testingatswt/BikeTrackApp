@@ -42,7 +42,7 @@ function initializeMap() {
             // handle your locations here
             // to perform long running operation on iOS
             // you need to create background task
-            setCurrentLocation(location);
+            //setCurrentLocation(location);
             BackgroundGeolocation.startTask(function (taskKey) {
                 // execute long running task
                 // eg. ajax post location
@@ -92,7 +92,7 @@ function initializeMap() {
 
 
 function setCurrentLocation(location) {
-    //storeLocationServer(location);
+    storeLocationServer(location);
 
     core.log('[DEBUG] location recieved');
     map = new google.maps.Map(document.getElementsByClassName('mapcanvas')[0], mapOptions);
