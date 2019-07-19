@@ -1,5 +1,5 @@
 // Initialize app
-const _server = 'https://kingridersapp.solutionwin.net/api/', // api url
+const _server = 'https://biketrack-dev.solutionwin.net/api/', // api url
       _appVersion = '1.0.1', // change this when updating app
       _apkFileUrl='https://biketrack.solutionwin.net/application/Dorbean.apk',
       _appVersionUrl="https://biketrack.solutionwin.net/application/version.json"; //

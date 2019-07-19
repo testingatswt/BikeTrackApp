@@ -4,7 +4,7 @@
   "name": "Kingriders App",
   "short_name": "Kingriders App",
   "version": "com.dorbean.driverapp",
-  "description": "Ride app to track biker location",
+  "description": "Kingriders app to track biker location",
   "author": "Apache Cordova Team",
   "icons": [
     {
