@@ -11,6 +11,8 @@ var mapOptions = {
     disableDefaultUI: true,
 };
 function initializeMap() {
+    console.log(typeof BackgroundGeolocation);
+    
     var status = localStorage.getItem('isStarted');
     var driver_id = localStorage.getItem('driver_id');
     BackgroundGeolocation.configure(setCurrentLocation,{
@@ -19,8 +21,8 @@ function initializeMap() {
         stationaryRadius: 0,
         distanceFilter: 0,
         notificationTitle: 'Background tracking',
-        notificationText: 'enabled',
-        debug: false,
+        notificationText: 'Enabled',
+        debug: true,
         interval: 15000,
         fastestInterval: 5000,
         activitiesInterval: 10000,

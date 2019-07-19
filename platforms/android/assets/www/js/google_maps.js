@@ -83,14 +83,14 @@ var maps = {
     },
     
     changeTrackingStatus: function () {
-        var status = localStorage.getItem('isStarted');
-        if(status == true || status == 'true'){
-            localStorage.setItem('isStarted', false);
+        var _isChecked = document.getElementById('online_status').checked;
+        // var status = localStorage.getItem('isStarted');
+        if(_isChecked){
             maps.sendStatus(2);
         }else{
-            localStorage.setItem('isStarted', true);
             maps.sendStatus(1);
         }
+        localStorage.setItem('isStarted', _isChecked);
         app.startLocationTracking();
     },
     sendStatus: function (status) {

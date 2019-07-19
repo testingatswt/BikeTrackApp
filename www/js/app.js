@@ -49,10 +49,7 @@ var app = {
     startLocationTracking: function(){
         console.log('asd')
         maps.setCurrentLocation(function(err,current_loc){
-            if(err){
-                console.log(err);
-                return false;
-            }
+            if(err) console.log(err);
             maps.show_map('mapcanvas');
         });
         
@@ -60,7 +57,14 @@ var app = {
         if(status == true || status == 'true'){
             $('.online_status').attr('checked','checked');
         }
-        initializeMap();
+        if(typeof BackgroundGeolocation === "undefined"){
+            setTimeout(function(){
+                initializeMap();
+            },500); 
+        }else{
+            initializeMap();
+        }
+        
         
     },
     setSession: function (data) {

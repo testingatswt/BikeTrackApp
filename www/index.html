@@ -18,6 +18,7 @@
         <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
         <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
         <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.0.5/tailwind.min.css">
     </head>
 
     <body>
@@ -66,7 +67,7 @@
                         <div class="center sliding logo"><img src="img/header-logo.png"></div>
                         <div class="right">
                             <label class="label-switch">
-                                <input type="checkbox" onchange="maps.changeTrackingStatus()" class="online_status">
+                                <input type="checkbox" id="online_status" onchange="maps.changeTrackingStatus()" class="online_status">
                                 <div class="checkbox"></div>
                             </label>
                         </div>
@@ -214,74 +215,38 @@
                     <i class="pe-7s-angle-left"></i>
                     <span>&nbsp;Back</span>
                 </a>
-                <div class="block">
-                    <h2>Save details and logout</h2>
-                    <p>Started at: <strong><span id="ed__started_at"></span></strong></p>
-                    <p>Ended at: <strong><span id="ed__ended_at"></span></strong></p>
-                    <p>Started location: <span id="ed__start_loc"></span></p>
-                    <p>Ending location: <span id="ed__end_loc"></span></p>
+                <div class="">
+                    <h2 class="text-xl font-bold text-center mb-6">Save details and end day</h2>
+                    <p class="px-8">Started at: <strong><span id="ed__started_at"></span></strong></p>
+                    <p class="px-8">Ended at: <strong><span id="ed__ended_at"></span></strong></p>
                     <!-- Close Popup -->
-                        <form id="frmEndDay" class="list-block" onsubmit="reports.endday(this);return false;">
+                        <form id="frmEndDay" class="px-8 pt-1 pb-8 mb-4" onsubmit="reports.endday(this);return false;">
                             <input type="hidden" name="started_at" value="">
                             <input type="hidden" name="ended_at" value="">
                             <input type="hidden" name="start_loc" value="">
                             <input type="hidden" name="end_loc" value="">
-                            <ul>
-                                <!-- <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Date</div>
-                                            <div class="item-input">
-                                                <input type="text" name="date">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li> -->
-                                <li> 
-                                    <div class="item-content">
-                                            <!-- <div class="item-media"><i class="pe-7s-next-2"></i></div> -->
-                                            
-                                        <div class="item-inner">
-                                            <div class="item-title label">Number of trips</div>
-                                            <div class="item-input">
-                                                <input type="number" name="no_of_trips" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Number of hours</div>
-                                            <div class="item-input">
-                                                <input type="number" name="no_of_hours" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Location</div>
-                                            <div class="item-input">
-                                                <input type="text" name="location" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Mileage</div>
-                                            <div class="item-input">
-                                                <input type="text" name="mileage" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="block">
-                                <button type="submit" class="button button-raised button-fill color-blue">Save</button>
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Number of trips
+                                </label>
+                                <input type="number" name="no_of_trips" id="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Number of hours
+                                </label>
+                                <input type="number" name="no_of_hours" id="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Mileage
+                                </label>
+                                <input type="number" name="mileage" id="mileage" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="flex items-center justify-center mt-4"> 
+                                <button class="w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                    Save
+                                </button>
                             </div>
                         </form>
                         

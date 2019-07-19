@@ -19,7 +19,7 @@ function initializeMap() {
         stationaryRadius: 0,
         distanceFilter: 0,
         notificationTitle: 'Background tracking',
-        notificationText: 'enabled',
+        notificationText: 'Enabled',
         debug: false,
         interval: 15000,
         fastestInterval: 5000,

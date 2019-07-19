@@ -19,7 +19,6 @@ var timeInterval_Callback = function(){
 }
 var reports = {
     submit:function(){
-        console.log('herer')
         // var formData = myApp.formToData('#frmReport');
         var _formData = $('#frmReport').serialize();
         if(core.debug_mode){
@@ -28,7 +27,6 @@ var reports = {
     },
     endday:function($form){
         var _form = $($form);
-        console.log('asdasdasd');
         var driver_id = localStorage.getItem('driver_id');
         var __data = helpers.getFormData(_form);
         __data.rider_id=driver_id;
@@ -36,7 +34,6 @@ var reports = {
         // var _data = {driver_id: driver_id, status:3, no_of_trips: no_of_trips, location: location};
         var url = "endday";
         core.postRequest(url, __data, function (response, status) {
-            console.log(response);
             var result = JSON.parse(response);
             if(status==="success"){
                 if(result.status==="success"){
@@ -48,10 +45,7 @@ var reports = {
                     myApp.closeModal();
                 }
             }
-
-            console.log(status);
         });
-        console.log(JSON.stringify( __data));
     },
     startRiding:function($self){
         $self = $($self);
@@ -75,8 +69,6 @@ var reports = {
             var _ended_atFORMAT = new Date(_ended_at);
             $('#ed__ended_at').text(_ended_atFORMAT.format('mmm dd, yyyy hh:MM TT'));
             
-            console.log(_started_loc);
-            
             if(typeof _started_loc !== "undefined"){
                 _form.find('[name="start_loc"]').val(_started_loc);
                 maps.getCurrentLocation(function(err, current_loc){
@@ -92,8 +84,8 @@ var reports = {
 
 
             
-            _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('dd-mm-yyyy HH:mm:ss', true));
-            _form.find('[name="ended_at"]').val(new Date(_ended_at).format('dd-mm-yyyy HH:mm:ss', true));
+            _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('dd-mm-yyyy HH:MM:ss', true));
+            _form.find('[name="ended_at"]').val(new Date(_ended_at).format('dd-mm-yyyy HH:MM:ss', true));
             var _htmlElem = $('#popup-endday') ;
             var popupHTML = _htmlElem.wrap('<p/>').parent().html();
             _htmlElem.unwrap();

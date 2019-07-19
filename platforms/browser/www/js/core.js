@@ -39,7 +39,7 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 var core = {
-    debug_mode: false,
+    debug_mode: true,
     domain: 'misto.alrasub.com',
 //    server: 'http://www.eshmar.com/dev/biketrack/public/api/',
     server: _server,
