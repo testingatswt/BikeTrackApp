@@ -86,9 +86,9 @@ var maps = {
         var _isChecked = document.getElementById('online_status').checked;
         // var status = localStorage.getItem('isStarted');
         if(_isChecked){
-            maps.sendStatus(2);
+            maps.sendStatus(1); // online
         }else{
-            maps.sendStatus(1);
+            maps.sendStatus(2); //offline
         }
         localStorage.setItem('isStarted', _isChecked);
         app.startLocationTracking();

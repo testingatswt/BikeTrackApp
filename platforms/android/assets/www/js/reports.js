@@ -30,7 +30,7 @@ var reports = {
         var driver_id = localStorage.getItem('driver_id');
         var __data = helpers.getFormData(_form);
         __data.rider_id=driver_id;
-        __data.status=3;
+        __data.status=3; // online status => logout - no marker will show
         // var _data = {driver_id: driver_id, status:3, no_of_trips: no_of_trips, location: location};
         var url = "endday";
         core.postRequest(url, __data, function (response, status) {
