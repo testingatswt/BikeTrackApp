@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+
+        <!-- Required meta tags-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+
+        <!-- Your app title -->
+        <title>Dorbean</title>
+
+        <link rel="stylesheet" href="css/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
+        <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
+        <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.0.5/tailwind.min.css">
+    </head>
+
+    <body>
+        <div class="statusbar-overlay"></div>
+
+        <div class="panel-overlay"></div>
+        <!-- Left panel with reveal effect-->
+        <div class="panel panel-left panel-reveal left_menu">
+            <div class="content-block">
+                <div class="row user_profile_row">
+                    <div class="col-33"><img src="img/default-user.png"></div>
+                    <div class="col-66">
+                        <h3>Rider Name</h3>
+                        <a href="templates/profile.html" class=" close-panel">View Profile</a>
+                    </div>
+                </div>
+                <div class="menu_item">
+                    <div class="">
+                        <a href="#" class="close-panel row" onclick="reports.startRiding(this);return false;" data-target="logout">
+                            <div class="col-33"><i class="pe-7s-next-2"></i></div>
+                            <div class="col-66">
+                                Logout
+                            </div>
+                        </a>
+                    </div>
+                    <!-- <div class="">
+                        <a href="#" class="close-panel row open-popup" data-popup="#popup-reports">
+                            <div class="col-33"><i class="pe-7s-graph3"></i></div>
+                            <div class="col-66">
+                                Reports
+                            </div>
+                        </a>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="views">
+            <div class="view view-main">
+                <div class="navbar">
+                    <div class="navbar-inner">
+                        <div class="left">
+                            <a href="#" class="link icon-only open-panel"><img src="img/new-menu.png"></a>
+                        </div>
+                        <!--<div class="center sliding">Dorbean</div>-->
+                        <div class="center sliding logo"><img src="img/header-logo.png"></div>
+                        <div class="right">
+                            <label class="label-switch">
+                                <input type="checkbox" id="online_status" onchange="maps.changeTrackingStatus()" class="online_status">
+                                <div class="checkbox"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="pages navbar-through home_page toolbar-through">
+                    <!-- Page, "data-page" contains page name -->
+                    <div data-page="index" class="page">
+                        <!-- Scrollable page content -->
+                        <div class="page-content">
+                            <div class="content-block">
+                                <div class="tracking_map_wrapper">
+                                    <div id="mapcanvas" class="mapcanvas"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <div class="toolbar-inner">
+                        <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="button button-fill button-raised btn--working color-blue" style="margin: 0 auto;">
+                            <span>Start day</span>
+                        </a>
+                        <span class="work__desc" style="display:none;">Started at: 12345</span>
+                        <a href="templates/profile.html" class=" close-panel" style="margin: 0 auto;">
+                            <div class="row user_profile_row">
+
+                                <div class="col">
+                                    <img src="img/default-user.png">
+                                </div>
+                                <div class="col name_row">
+                                    <div>
+                                        <div class="user_name"></div>
+                                        <div class="vehicle_number small"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="login-screen" id="login-screen">
+                    <div class="page-content login-screen-content">
+                        <div class="login-screen-title flex justify-center"><img src="img/logo.png"></div>
+                        <form class="login_form">
+                            <div class="list">
+                                <ul>
+                                    <li class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-input-wrap">
+                                                <input type="text" class="email" name="email" placeholder="Email" value="">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-input-wrap">
+                                                <input type="password" class="password" name="password" placeholder="Password" value="">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list">
+                                <ul>
+                                    <li class="form_submit_wrapper">
+                                        <a class="item-link button button-fill" href="#" onclick="login.process();">Sign In</a></li>
+                                </ul>
+                            </div>
+                        </form>
+                        <div class="footer">
+                            <div class="block-footer">Dorbean - taaruff.com product</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modals -->
+        <div class="modals">
+            
+            <div class="popup popup-reports popup--custom" id="popup-endday">
+                <a class="close-popup" href="#">
+                    <i class="pe-7s-angle-left"></i>
+                    <span>&nbsp;Back</span>
+                </a>
+                <div class="">
+                    <h2 class="text-xl font-bold text-center mb-6" id="reports_heading">Save details and end day</h2>
+                    <p class="px-8">Started at: <strong><span id="ed__started_at"></span></strong></p>
+                    <p class="px-8">Ended at: <strong><span id="ed__ended_at"></span></strong></p>
+                    <!-- Close Popup -->
+                        <form id="frmEndDay" class="px-8 pt-1 pb-8 mb-4" onsubmit="reports.endday(this);return false;">
+                            <input type="hidden" name="started_at" value="">
+                            <input type="hidden" name="ended_at" value="">
+                            <input type="hidden" name="start_loc" value="">
+                            <input type="hidden" name="end_loc" value="">
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Number of trips
+                                </label>
+                                <input required type="number" name="no_of_trips" id="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Number of hours
+                                </label>
+                                <input required type="number" name="no_of_hours" id="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                        Mileage
+                                </label>
+                                <input type="number" name="mileage" id="mileage" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                            </div>
+                            <div class="flex items-center justify-center mt-4"> 
+                                <button class="w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                        
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/functions.js"></script>
+        <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnbON5DNhSRBH3Nc58doNBU_Fsb1tlOjk&libraries=places"></script>
+        <script type="text/javascript" src="js/login.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/reports.js"></script>
+        <script type="text/javascript" src="js/mileage_background.js"></script>
+        <script type="text/javascript" src="js/profile.js"></script>
+        <script type="text/javascript" src="js/google_maps.js"></script>
+        <script type="text/javascript">
+                                            app.initialize();
+        </script>
+
+
+    </body>
+
+</html>

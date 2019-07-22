@@ -1,0 +1,17 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "Kingriders App",
+  "short_name": "Kingriders App",
+  "version": "com.dorbean.driverapp",
+  "description": "Kingriders app to track biker location",
+  "author": "Apache Cordova Team",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "undefinedxundefined"
+    }
+  ],
+  "start_url": "index.html"
+}
