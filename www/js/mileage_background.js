@@ -21,6 +21,7 @@ function initializeMap() {
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
         debug: false,
+        // stopOnTerminate: false,
         interval: 15000,
         fastestInterval: 5000,
         activitiesInterval: 10000,

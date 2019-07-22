@@ -21,6 +21,7 @@ function initializeMap() {
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
         debug: false,
+        // stopOnTerminate: false,
         interval: 15000,
         fastestInterval: 5000,
         activitiesInterval: 10000,
@@ -92,7 +93,7 @@ function initializeMap() {
 
 
 function setCurrentLocation(location) {
-    //storeLocationServer(location);
+    storeLocationServer(location);
 
     core.log('[DEBUG] location recieved');
     map = new google.maps.Map(document.getElementsByClassName('mapcanvas')[0], mapOptions);
