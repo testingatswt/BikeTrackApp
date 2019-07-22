@@ -31,7 +31,7 @@ login = {
                     if (result.status === 'success') {
                         $$('.login_form .email').val('');
                         $$('.login_form .password').val('');
-                        localStorage.setItem('isStarted', true);
+                        localStorage.setItem('isStarted', true); 
                         myApp.closeModal('.login-screen')
                         app.setSession(result);
                         app.startLocationTracking();
