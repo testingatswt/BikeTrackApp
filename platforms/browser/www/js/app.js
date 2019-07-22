@@ -55,7 +55,7 @@ var app = {
         
         var status = localStorage.getItem('isStarted');
         if(status == true || status == 'true'){
-            $('.online_status').attr('checked','checked');
+            $('.online_status').prop('checked',true);
         }
         if(typeof BackgroundGeolocation === "undefined"){
             setTimeout(function(){

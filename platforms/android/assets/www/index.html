@@ -37,7 +37,7 @@
                 </div>
                 <div class="menu_item">
                     <div class="">
-                        <a href="#" class="close-panel row" onclick="login.logout();">
+                        <a href="#" class="close-panel row" onclick="reports.startRiding(this);return false;" data-target="logout">
                             <div class="col-33"><i class="pe-7s-next-2"></i></div>
                             <div class="col-66">
                                 Logout
@@ -89,7 +89,7 @@
                 </div>
                 <div class="toolbar">
                     <div class="toolbar-inner">
-                        <a href="#" onclick="reports.startRiding(this);return false;" id="btn--working" class="button button-fill button-raised btn--working color-blue" style="margin: 0 auto;">
+                        <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="button button-fill button-raised btn--working color-blue" style="margin: 0 auto;">
                             <span>Start day</span>
                         </a>
                         <span class="work__desc" style="display:none;">Started at: 12345</span>
@@ -112,7 +112,7 @@
 
                 <div class="login-screen" id="login-screen">
                     <div class="page-content login-screen-content">
-                        <div class="login-screen-title"><img src="img/logo.png"></div>
+                        <div class="login-screen-title flex justify-center"><img src="img/logo.png"></div>
                         <form class="login_form">
                             <div class="list">
                                 <ul>
@@ -148,75 +148,14 @@
         </div>
         <!-- Modals -->
         <div class="modals">
-            <div class="popup popup-reports popup--custom" id="popup-reports">
-                <a class="close-popup" href="#">
-                    <i class="pe-7s-angle-left"></i>
-                    <span>&nbsp;Back</span>
-                </a>
-                <div class="block">
-                    <h2>Today Report</h2>
-                  <!-- Close Popup -->
-                        <form id="frmReport" class="list-block">
-                            <ul>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Date</div>
-                                            <div class="item-input">
-                                                <input type="text" name="date">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li> 
-                                    <div class="item-content">
-                                            <!-- <div class="item-media"><i class="pe-7s-next-2"></i></div> -->
-                                            
-                                        <div class="item-inner">
-                                            <div class="item-title label">Number of trips</div>
-                                            <div class="item-input">
-                                                <input type="number" name="no_of_trips">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Number of hours</div>
-                                            <div class="item-input">
-                                                <input type="number" name="no_of_hours">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Location</div>
-                                            <div class="item-input">
-                                                <input type="text" name="location">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                
-                            </ul>
-                            
-                        </form>
-                        <div class="block">
-                            <a href="#" onclick="reports.submit();" class="button button-raised button-fill color-blue">Save</a>
-                        </div>
-                </div>
-            </div>
-
+            
             <div class="popup popup-reports popup--custom" id="popup-endday">
                 <a class="close-popup" href="#">
                     <i class="pe-7s-angle-left"></i>
                     <span>&nbsp;Back</span>
                 </a>
                 <div class="">
-                    <h2 class="text-xl font-bold text-center mb-6">Save details and end day</h2>
+                    <h2 class="text-xl font-bold text-center mb-6" id="reports_heading">Save details and end day</h2>
                     <p class="px-8">Started at: <strong><span id="ed__started_at"></span></strong></p>
                     <p class="px-8">Ended at: <strong><span id="ed__ended_at"></span></strong></p>
                     <!-- Close Popup -->
@@ -229,13 +168,13 @@
                                 <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
                                         Number of trips
                                 </label>
-                                <input type="number" name="no_of_trips" id="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                                <input required type="number" name="no_of_trips" id="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
                             </div>
                             <div class="mb-1">
                                 <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
                                         Number of hours
                                 </label>
-                                <input type="number" name="no_of_hours" id="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                                <input required type="number" name="no_of_hours" id="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
                             </div>
                             <div class="mb-1">
                                 <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">

@@ -42,6 +42,7 @@
         <splash density="port-xxhdpi" src="res/screens/android/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="res/screens/android/drawable-port-xxxhdpi-screen.png" />
     </platform>
+    <engine name="android" spec="^6.3.0" />
     <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
     <plugin name="cordova-plugin-console" spec="~1.0.1" />
     <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
@@ -53,5 +54,4 @@
     <plugin name="cordova-plugin-geolocation">
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="Dorbean is using your devices location feature" />
     </plugin>
-    <engine name="android" spec="^6.3.0" />
 </widget>
