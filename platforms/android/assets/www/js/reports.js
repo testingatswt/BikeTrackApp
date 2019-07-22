@@ -25,7 +25,7 @@ var reports = {
             console.log("Reports data: ",JSON.stringify(_formData));
         }
     },
-    endday:function($form){
+    endday:function($form){ 
         var _form = $($form);
         var driver_id = localStorage.getItem('driver_id');
         var __data = helpers.getFormData(_form);

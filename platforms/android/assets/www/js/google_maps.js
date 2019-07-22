@@ -82,7 +82,7 @@ var maps = {
         marker.setMap(map);
     },
     
-    changeTrackingStatus: function () {
+    changeTrackingStatus: function () { 
         var _isChecked = document.getElementById('online_status').checked;
         // var status = localStorage.getItem('isStarted');
         if(_isChecked){
