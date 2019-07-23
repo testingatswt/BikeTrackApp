@@ -4,25 +4,92 @@ var timeInterval_Timer,
     timeInterval_Selector=$('.work__desc');
     timeInterval_Interval=45 * 1000; //45 seconds
 var timeInterval_Callback = function(){
-    // console.log(++$r);
     var _time = localStorage.getItem("riding_start_time");
     if(typeof _time === "undefined"){
         clearInterval(timeInterval_Timer);
         return false;
     }
     _time = parseFloat(_time);
-    console.log(new Date(_time));
     var _timeSince = helpers.timeSince(new Date(_time))+" ago";
-    console.log(_timeSince);
+    core.log(_timeSince);
     timeInterval_Selector.text('Started: '+_timeSince);
 
 }
 var reports = {
-    submit:function(){
-        // var formData = myApp.formToData('#frmReport');
-        var _formData = $('#frmReport').serialize();
-        if(core.debug_mode){
-            console.log("Reports data: ",JSON.stringify(_formData));
+    reports___datePicker:null,
+    get_previous_reports:function(){ 
+        if(reports.reports___datePicker){
+         var _result_container = $('#reports__search-result ul');
+         _result_container.html('');
+         var _datePickerValue = reports.reports___datePicker.value; 
+         var driver_id = localStorage.getItem('driver_id');
+         var _dates = [];
+         _datePickerValue.forEach(function(_v,_i){
+            _dates.push(new Date(_v).format('dd-mm-yyyy'));
+         });
+         var __data ={date:_dates[0], rider_id:driver_id};
+         var url="get-reports";
+         core.postRequest(url, __data, function (response, status) {
+            core.log('reports_status: '+status);
+            core.log(response);
+            if(status==="success"){
+                var result = JSON.parse(response);
+                if(result.status==="success"){
+                    var _reports = result.reports;
+                    if(_reports.length > 0){
+                        core.log(_reports);  
+                        _reports.forEach(function(report,_i){
+                            var _card = $('<li class="card" />');
+                            var _cardHeader = $('<div class="card-header" />');
+                            var _cardContent = $('<div class="card-content" />');
+                            var _cardContentInner = $('<div class="card-content-inner" />');
+
+                            var _html =  '     '  + 
+                            '    <div class="w-full">  '  + 
+                            '       <div class="">  '  + 
+                            '           <label>Number of trips: </label>  '  + 
+                            '           <span>'+report.no_of_trips+'</span>  '  + 
+                            '       </div>  '  + 
+                            '       <div class="">  '  + 
+                            '           <label>Number of hours: </label>  '  + 
+                            '           <span>'+report.no_of_hours+'</span>  '  + 
+                            '       </div>  '  + 
+                            '       <div class="">  '  + 
+                            '           <label>Milage: </label>  '  + 
+                            '           <span>'+report.mileage+'</span>  '  + 
+                            '       </div>  '  + 
+                            '       <div class="">  '  + 
+                            '           <label>Calculated hours: </label>  '  + 
+                            '           <span>'+report.online_hours+'</span>  '  + 
+                            '       </div>  '  + 
+                            '  </div>  ' ; 
+                            _cardContentInner.append(_html);
+
+
+
+
+                            _cardContent.append(_cardContentInner);
+                            _card.append(_cardContent);
+                            _result_container.append(_card);
+                        });
+                    }
+                    else{
+                        var _card = $('<li class="card" />');
+                        var _cardHeader = $('<div class="card-header" />');
+                        var _cardContent = $('<div class="card-content" />');
+                        var _cardContentInner = $('<div class="card-content-inner" />');
+
+                        var _html = '<span class="text-center w-full font-bold">No record found</span>';
+                        _cardContentInner.append(_html);
+                        _cardContent.append(_cardContentInner);
+                        _card.append(_cardContent);
+                        _result_container.append(_card);
+                    }
+                }
+            }
+            core.log(status);
+         });
+
         }
     },
     endday:function($form){ 
@@ -43,7 +110,7 @@ var reports = {
                     localStorage.removeItem("isRidingStarted");
                     localStorage.removeItem("riding_start_time");
                     localStorage.removeItem("starting_location");
-                    $('#btn--working').text('Start day').addClass('color-blue');
+                    $('#btn--working').text('Start day');
                     localStorage.setItem('isStarted', false);
                     $('.online_status').prop('checked', false);
                     timeInterval_Selector.hide();
@@ -92,11 +159,11 @@ var reports = {
             if(typeof _started_loc !== "undefined"){
                 _form.find('[name="start_loc"]').val(_started_loc);
                 maps.getCurrentLocation(function(err, current_loc){
-                    if(err) console.log(err)
+                    if(err) core.log(err)
                     if(current_loc){
                         // $('#ed__start_loc').html('<a href="#"  data-start-loc="'+_started_loc+'" data-end-loc="'+JSON.stringify(current_loc)+'" class="ed__startEndLoc">Click to see</a>');
                         _end_loc=JSON.stringify(current_loc);
-                        console.log(_end_loc);
+                        core.log(_end_loc);
                         _form.find('[name="end_loc"]').val(_end_loc);
                     }
                 });
@@ -108,7 +175,7 @@ var reports = {
             if(_datatarget==="logout"){
                 $('#reports_heading').text('Save details and Logout');
             }
-            console.log('data target: ',_datatarget);
+            core.log('data target: '+_datatarget);
             _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('dd-mm-yyyy HH:MM:ss', true));
             _form.find('[name="ended_at"]').val(new Date(_ended_at).format('dd-mm-yyyy HH:MM:ss', true));
             var _htmlElem = $('#popup-endday') ;
@@ -163,7 +230,7 @@ var reports = {
                                 localStorage.setItem("isRidingStarted", "true");
                                 localStorage.setItem("riding_start_time", Date.now());
                                 maps.getCurrentLocation(function(err, current_loc){
-                                    if(err) console.log(err)
+                                    if(err) core.log(err)
                                     if(current_loc){
                                         localStorage.setItem("starting_location", JSON.stringify(current_loc));  
                                     }
@@ -175,7 +242,7 @@ var reports = {
                                 $self.text('End day').removeClass('color-blue');
                                 localStorage.setItem('isStarted', true);
                                 app.setSession(result);
-                                app.startLocationTracking();
+                                //app.startLocationTracking();
                             } else {
                                 core.alert('Error', result.error, 'OK');
                             }
@@ -200,3 +267,8 @@ var reports = {
     }
 }
 reports.checkIfStartRiding('#btn--working');
+
+reports.reports___datePicker = myApp.calendar({
+    input: '#reports-datepicker',
+    dateFormat: 'DD, MM dd, yyyy'
+}); 

@@ -24,7 +24,6 @@ login = {
             var login_data = {email: email, password: password, login: true};
             var url = "login";
             core.postRequest(url, login_data, function (response, status) {
-                console.log(response)
                 if (status === 'success') {
                     var result = JSON.parse(response);
                     
@@ -34,7 +33,7 @@ login = {
                         localStorage.setItem('isStarted', true); 
                         myApp.closeModal('.login-screen')
                         app.setSession(result);
-                        app.startLocationTracking();
+                        //app.startLocationTracking();
                     } else {
                         core.alert('Error', result.error, 'OK');
                     }
@@ -195,7 +194,7 @@ login = {
                                     localStorage.setItem('driver_pic', '');
                                     localStorage.setItem('isStarted', false);
                                     $('.online_status').prop('checked', false);
-                                    app.startLocationTracking();
+                                    //app.startLocationTracking();
                                     myApp.loginScreen();
                                 } else {
                                     core.alert('Error', result.error, 'OK');

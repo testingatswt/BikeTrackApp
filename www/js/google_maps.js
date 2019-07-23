@@ -2,9 +2,9 @@ var map=null,
     directionsDisplay=null,
     directionsService=null;
 var $$ = Dom7;
-$(document).ready(function (e) {
-    app.startLocationTracking();
-});
+// $(document).ready(function (e) {
+//     app.startLocationTracking();
+// });
 
 var maps = {
     current_map: '',
@@ -91,7 +91,7 @@ var maps = {
             maps.sendStatus(2); //offline
         }
         localStorage.setItem('isStarted', _isChecked);
-        app.startLocationTracking();
+        //app.startLocationTracking();
     },
     sendStatus: function (status) {
         var driver_id = localStorage.getItem('driver_id');

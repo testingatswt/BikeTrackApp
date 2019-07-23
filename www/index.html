@@ -12,7 +12,7 @@
         <meta name="msapplication-tap-highlight" content="no">
 
         <!-- Your app title -->
-        <title>Dorbean</title>
+        <title>Kingriders App</title>
 
         <link rel="stylesheet" href="css/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
         <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
@@ -37,6 +37,14 @@
                 </div>
                 <div class="menu_item">
                     <div class="">
+                        <a href="#" class="close-panel row open-popup" data-popup="#popup-reports">
+                            <div class="col-33"><i class="pe-7s-graph3"></i></div>
+                            <div class="col-66">
+                                Reports
+                            </div>
+                        </a>
+                    </div>
+                    <div class="">
                         <a href="#" class="close-panel row" onclick="reports.startRiding(this);return false;" data-target="logout">
                             <div class="col-33"><i class="pe-7s-next-2"></i></div>
                             <div class="col-66">
@@ -44,14 +52,6 @@
                             </div>
                         </a>
                     </div>
-                    <!-- <div class="">
-                        <a href="#" class="close-panel row open-popup" data-popup="#popup-reports">
-                            <div class="col-33"><i class="pe-7s-graph3"></i></div>
-                            <div class="col-66">
-                                Reports
-                            </div>
-                        </a>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -66,8 +66,8 @@
                         <!--<div class="center sliding">Dorbean</div>-->
                         <div class="center sliding logo"><img src="img/header-logo.png"></div>
                         <div class="right">
-                            <label class="label-switch">
-                                <input type="checkbox" id="online_status" onchange="maps.changeTrackingStatus()" class="online_status">
+                            <label class="label-switch hidden">
+                                <input type="checkbox" id="online_status" onchange="" class="online_status">
                                 <div class="checkbox"></div>
                             </label>
                         </div>
@@ -76,12 +76,21 @@
                 <div class="pages navbar-through home_page toolbar-through">
                     <!-- Page, "data-page" contains page name -->
                     <div data-page="index" class="page">
+
                         <!-- Scrollable page content -->
                         <div class="page-content">
                             <div class="content-block">
-                                <div class="tracking_map_wrapper">
+                                <!-- <div class="tracking_map_wrapper">
                                     <div id="mapcanvas" class="mapcanvas"></div>
+                                </div> -->
+                                <div class="time_wrapper flex flex-col content-center absolute w-screen">
+                                    <span class="work__desc text-xl top-150 w-screen text-center py-10" style="display:none;">Started at: 12345</span>
+                                    <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="btn--working py-3 bg-black text-white font-bold px-13 " style="margin: 10px auto;">
+                                        <span>Start day</span>
+                                    </a>
+                                    
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -89,10 +98,6 @@
                 </div>
                 <div class="toolbar">
                     <div class="toolbar-inner">
-                        <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="button button-fill button-raised btn--working color-blue" style="margin: 0 auto;">
-                            <span>Start day</span>
-                        </a>
-                        <span class="work__desc" style="display:none;">Started at: 12345</span>
                         <a href="templates/profile.html" class=" close-panel" style="margin: 0 auto;">
                             <div class="row user_profile_row">
 
@@ -135,12 +140,12 @@
                             <div class="list">
                                 <ul>
                                     <li class="form_submit_wrapper">
-                                        <a class="item-link button button-fill" href="#" onclick="login.process();">Sign In</a></li>
+                                        <a class="py-3 bg-black text-white font-bold px-10" href="#" onclick="login.process();">Sign In</a></li>
                                 </ul>
                             </div>
                         </form>
                         <div class="footer">
-                            <div class="block-footer">Dorbean - taaruff.com product</div>
+                            <div class="block-footer">&copy; Copyright 2019 kingriders.net</div> 
                         </div>
                     </div>
                 </div>
@@ -148,6 +153,26 @@
         </div>
         <!-- Modals -->
         <div class="modals">
+
+                <div class="popup popup-reports popup--custom" id="popup-reports">
+                        <a class="close-popup" href="#">
+                            <i class="pe-7s-angle-left"></i>
+                            <span>&nbsp;Back</span>
+                        </a>
+                        <div class="mx-6">
+                            <h2 class="text-xl font-bold text-center mb-6">Reports</h2>
+                            <div class="content-block-title pl-0 ml-0">Select date to search</div>
+                            <div class="mb-30">
+                                <input type="text" id="reports-datepicker" placeholder="Select date" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono" readonly>
+                                <div class="w-full clearfix">
+                                    <button class="p-0 py-3 bg-black text-white text-center w-1/5 mt-3 float-right" onclick="reports.get_previous_reports();return false;" id="btnReportSearch">Search</button>
+                                </div>
+                            </div>
+                            <div id="reports__search-result" class="list-block cards-list">
+                                <ul></ul>
+                            </div>
+                        </div>
+                    </div>
             
             <div class="popup popup-reports popup--custom" id="popup-endday">
                 <a class="close-popup" href="#">
@@ -183,7 +208,7 @@
                                 <input type="number" name="mileage" id="mileage" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
                             </div>
                             <div class="flex items-center justify-center mt-4"> 
-                                <button class="w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                <button class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline" type="submit">
                                     Save
                                 </button>
                             </div>

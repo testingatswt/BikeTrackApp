@@ -1,14 +1,15 @@
 // Initialize app
-const _server = 'https://biketrack-dev.solutionwin.net/api/', // api url
+const _server = 'http://68.183.189.31/api/', // api url 
       _appVersion = '1.0.2', // change this when updating app
-      _apkFileUrl='https://biketrack.solutionwin.net/application/Dorbean.apk',
-      _appVersionUrl="https://biketrack.solutionwin.net/application/version.json"; //
+      _apkFileUrl='http://68.183.189.31/application/Dorbean.apk',
+      _appVersionUrl="http://68.183.189.31/application/version.json";
                     /** 
                      * version format:
                      *  {
                             "version": "1.0.1"
                         }
                     */
+                   
 
 
 var userLoggedIn = false;
@@ -39,7 +40,7 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 var core = {
-    debug_mode: false, 
+    debug_mode: true,  
     domain: 'misto.alrasub.com',
 //    server: 'http://www.eshmar.com/dev/biketrack/public/api/',
     server: _server,
@@ -85,7 +86,7 @@ var core = {
                 $$.getJSON(core.app_version_url, function (response) {
                     var _version = response.version;
                     var _isVersion = helpers.compareVersionNumbers(core.app_version,_version)
-                    console.log(_isVersion)
+                    core.log("Version: "+_isVersion);
                     if(_isVersion === -1){//need to update
                         myApp.modal({
                             title:  'Outdated',
@@ -195,6 +196,12 @@ var core = {
         }
     },
     goBack: function (e) {
+        
+        if ($$('.modal-in').length > 0) { 
+            e.preventDefault();
+            myApp.closeModal();
+            return false;
+        }
         var page_center = $$('.navbar .navbar-on-center a').attr('href');
         if (typeof page_center == 'undefined' || page_center == 'exit') {
             navigator.app.exitApp();

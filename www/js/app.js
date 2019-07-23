@@ -27,7 +27,7 @@ var app = {
         if (core.isOnline()) {
             var login_status = localStorage.getItem(login.login_status);
             if (login_status === true || login_status === 'true') {
-                app.startLocationTracking();
+                //app.startLocationTracking();
             }
             
         }
@@ -47,9 +47,8 @@ var app = {
         }
     },
     startLocationTracking: function(){
-        console.log('asd')
         maps.setCurrentLocation(function(err,current_loc){
-            if(err) console.log(err);
+            if(err) core.log(err);
             maps.show_map('mapcanvas');
         });
         
