@@ -43,9 +43,17 @@ var reports = {
                             var _cardHeader = $('<div class="card-header" />');
                             var _cardContent = $('<div class="card-content" />');
                             var _cardContentInner = $('<div class="card-content-inner" />');
-
+                            var _timingHTML = '';
+                            if(report.start_time && report.start_time!=='null' && report.end_time && report.end_time!=='null'){
+                                _timingHTML+=new Date(report.start_time+' UTC').format("hh:MM tt");
+                                _timingHTML+=' - '+new Date(report.end_time+' UTC').format("hh:MM tt");
+                            }
+                            var _hrt = (parseFloat(report.online_hours)*1000).millisecondsToHumanreadable();
                             var _html =  '     '  + 
                             '    <div class="w-full">  '  + 
+                            '       <div class="w-full text-center font-bold mb-3">  '  + 
+                            '           <span>'+_timingHTML+'</span>  '  + 
+                            '       </div>  '  + 
                             '       <div class="">  '  + 
                             '           <label>Number of trips: </label>  '  + 
                             '           <span>'+report.no_of_trips+'</span>  '  + 
@@ -59,8 +67,8 @@ var reports = {
                             '           <span>'+report.mileage+'</span>  '  + 
                             '       </div>  '  + 
                             '       <div class="">  '  + 
-                            '           <label>Calculated hours: </label>  '  + 
-                            '           <span>'+report.online_hours+'</span>  '  + 
+                            '           <label>Online for: </label>  '  + 
+                            '           <span>'+_hrt+'</span>  '  + 
                             '       </div>  '  + 
                             '  </div>  ' ; 
                             _cardContentInner.append(_html);
@@ -115,6 +123,9 @@ var reports = {
                     $('.online_status').prop('checked', false);
                     timeInterval_Selector.hide();
                     myApp.closeModal();
+                    if(_datatarget ==='btn--working'){
+                        myApp.accordionClose('#accordion__report');
+                    }
                     if(_datatarget==='logout'){
                         localStorage.setItem(login.login_status, false);
                         localStorage.setItem('user_id', '');
@@ -171,17 +182,28 @@ var reports = {
 
             
             _form.attr('data-target',_datatarget);
-            $('#reports_heading').text('Save details and end day');
-            if(_datatarget==="logout"){
-                $('#reports_heading').text('Save details and Logout');
-            }
+            
             core.log('data target: '+_datatarget);
             _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('dd-mm-yyyy HH:MM:ss', true));
             _form.find('[name="ended_at"]').val(new Date(_ended_at).format('dd-mm-yyyy HH:MM:ss', true));
             var _htmlElem = $('#popup-endday') ;
+            
+            _htmlElem.find('.reports_heading').text('Save details and end day');
+            if(_datatarget==="logout"){
+                _htmlElem.find('.reports_heading').text('Save details and Logout');
+            }
             var popupHTML = _htmlElem.wrap('<p/>').parent().html();
             _htmlElem.unwrap();
-            myApp.popup(popupHTML);
+            if(_datatarget==='btn--working'){
+                //popup__inner-content
+                var _accordionHTML = $(popupHTML).find('.popup__inner-content').html();
+                $('#accordion__report .accordion-item-content').html(_accordionHTML);
+                myApp.accordionToggle('#accordion__report');
+            }
+            else{
+                myApp.popup(popupHTML);
+            }
+            
             
 
         }
@@ -271,4 +293,5 @@ reports.checkIfStartRiding('#btn--working');
 reports.reports___datePicker = myApp.calendar({
     input: '#reports-datepicker',
     dateFormat: 'DD, MM dd, yyyy'
-}); 
+});
+

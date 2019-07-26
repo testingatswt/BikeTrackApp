@@ -1,6 +1,6 @@
 // Initialize app
 const _server = 'http://68.183.189.31/api/', // api url 
-      _appVersion = '1.1.0', // change this when updating app
+      _appVersion = '1.1.1', // change this when updating app
       _apkFileUrl='http://68.183.189.31/application/Dorbean.apk',
       _appVersionUrl="http://68.183.189.31/application/version.json";
                     /** 
@@ -40,7 +40,7 @@ var mainView = myApp.addView('.view-main', {
     dynamicNavbar: true
 });
 var core = {
-    debug_mode: true,  
+    debug_mode: false,
     domain: 'misto.alrasub.com',
 //    server: 'http://www.eshmar.com/dev/biketrack/public/api/',
     server: _server,
@@ -146,7 +146,6 @@ var core = {
             if (show_spinner == 'yes') {
                 myApp.showIndicator();
             }
-
             var req_url = core.server + url;
             if (parms) {
                 $.each(parms, function (key, value) {
@@ -155,12 +154,38 @@ var core = {
             }
             core.log(req_url);
             $$.ajaxSetup({cache: false});
-            $$.getJSON(req_url, function (response) {
+            $.ajax({
+                url: req_url,
+                method: "GET"
+            })
+            .done(function(data) {
+                //Ajax request was successful.
                 if (show_spinner == 'yes') {
                     myApp.hideIndicator();
                 }
-                callback(response, 'success');
+                if(data.status_code && data.status_code===404){
+                    //logout
+                   login.logout();
+                   myApp.alert('Your session is expired. Please login.', 'Session expired');
+                   return false;
+                }
+                callback(data, 'success');
+            })
+            .fail(function(xhr, status, error) {
+                if (show_spinner == 'yes') {
+                    myApp.hideIndicator();
+                }
+                core.log(xhr.status + ': ' + xhr.statusText);
+                //Ajax request failed.
+                if(xhr.status===404){
+                    //logout
+                    login.logout();
+                    myApp.alert('Your session is expired. Please login.', 'Session expired');
+                    return false;
+                }
+                callback(error, 'error');
             });
+
         } else {
             callback('', 'offline');
         }
@@ -173,49 +198,69 @@ var core = {
             }
             var req_url = core.server + url;
             core.log(req_url);
-            $$.ajax({
+            $.ajax({
                 url: req_url,
                 context: document.body,
                 data: post_data,
-                method: "POST",
-                error: function (data, transport) {
-                    if (show_spinner == 'yes') {
-                        myApp.hideIndicator();
-                    }
-                    callback(data, 'error');
-                },
-                success: function (response) {
-                    if (show_spinner == 'yes') {
-                        myApp.hideIndicator();
-                    }
-                    callback(response, 'success');
+                method: "POST"
+            })
+            .done(function(data) {  
+                //Ajax request was successful.
+                if (show_spinner == 'yes') {
+                    myApp.hideIndicator();
                 }
+                if(data.status_code && data.status_code===404){
+                    //logout
+                   login.logout();
+                   myApp.alert('Your session is expired. Please login.', 'Session expired');
+                   return false;
+                }
+                callback(JSON.stringify(data), 'success');
+            })
+            .fail(function(xhr, status, error) {
+                if (show_spinner == 'yes') {
+                    myApp.hideIndicator();
+                }
+                core.log(xhr.status + ': ' + xhr.statusText);
+                //Ajax request failed.
+                if(xhr.status===404){
+                    //logout
+                   login.logout();
+                   myApp.alert('Your session is expired. Please login.', 'Session expired');
+                   return false;
+                }
+                callback(JSON.stringify(data), 'error');
             });
         } else {
             callback('', 'offline');
         }
     },
     goBack: function (e) {
-        
-        if ($$('.modal-in').length > 0) { 
+        if(mainView.activePage.name==="profile"){
             e.preventDefault();
-            myApp.closeModal();
-            return false;
+            mainView.router.back({
+                url: '/',
+            });
         }
-        var page_center = $$('.navbar .navbar-on-center a').attr('href');
-        if (typeof page_center == 'undefined' || page_center == 'exit') {
-            navigator.app.exitApp();
-        } else {
-            var login_status = localStorage.getItem('login_status');
-            if (login_status === true || login_status === 'true') {
+        else{
+            if ($$('.modal-in').length > 0 && !$$('.modal-in').hasClass('login-screen')) { 
                 e.preventDefault();
-                mainView.router.back({
-                    url: page_center,
-                    force: true,
-                    ignoreCache: true
-                });
-            } else {
+                myApp.closeModal();
+                return false;
+            }
+            var page_center = $$('.navbar .navbar-on-center a').attr('href');
+            if (typeof page_center == 'undefined' || page_center == 'exit') {
                 navigator.app.exitApp();
+            } else {
+                var login_status = localStorage.getItem('login_status');
+                if (login_status === true || login_status === 'true') {
+                    e.preventDefault();
+                    mainView.router.back({
+                        url: page_center,
+                    });
+                } else {
+                    navigator.app.exitApp();
+                }
             }
         }
     },
@@ -373,3 +418,4 @@ $(".ext-link").on("click", function () {
         }
     }
 });
+

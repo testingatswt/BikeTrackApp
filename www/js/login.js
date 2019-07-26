@@ -35,7 +35,7 @@ login = {
                         app.setSession(result);
                         //app.startLocationTracking();
                     } else {
-                        core.alert('Error', result.error, 'OK');
+                        myApp.alert(result.error, 'Error');
                     }
 
                 }
@@ -73,7 +73,7 @@ login = {
                             return;
                         });
                     } else {
-                        core.alert('Error', result.msg, 'OK');
+                        myApp.alert(result.msg, 'Error');
                     }
 
                 }
@@ -141,70 +141,18 @@ login = {
     },
 
     logout: function () {
-        var text = '<div>';
-        text += '<div class="modal-text">Number of trips</div><div class="input-field"><input type="text" name="no_of_trips" id="no_of_trips" class="no_of_trips"></div>';
-        text += '<div class="modal-text">Location</div><div class="input-field"><input type="text" name="location" id="location" class="location"></div>';
-        text += '</div>';
-        myApp.modal({
-            title: 'Save detail and logout',
-            text: text,
-            buttons: [
-                {
-                    text: 'Cancel',
-                    close: true,
-                    onClick: function () {
-                        
-                    }
-                },
-                {
-                    text: 'Save',
-                    close: false,
-                    onClick: function () {
-                        var no_of_trips = $('.no_of_trips').val();
-                        var location = $('.location').val();
-                        var driver_id = localStorage.getItem('driver_id');
-                        if (no_of_trips === '') {
-                            core.alert('Error', 'No of trips required', 'OK', function () {
-                                return;
-                            });
-                            return;
-                        }
-                        if (location === '') {
-                            core.alert('Error', 'Location required', 'OK', function () {
-                                return;
-                            });
-                            return;
-                        }
-                        myApp.showIndicator();
-
-                        var login_data = {driver_id: driver_id, status:3, no_of_trips: no_of_trips, location: location};
-                        var url = "logout";
-                        core.postRequest(url, login_data, function (response, status) {
-                            if (status === 'success') {
-                                var result = JSON.parse(response);
-                                if (result.status === 'success') {
-                                    myApp.closeModal();
-                                    maps.sendStatus(3);
-                                    localStorage.setItem(login.login_status, false);
-                                    localStorage.setItem('user_id', '');
-                                    localStorage.setItem('driver_id', '');
-                                    localStorage.setItem('full_name', '');
-                                    localStorage.setItem('email', '');
-                                    localStorage.setItem('mobile', '');
-                                    localStorage.setItem('driver_pic', '');
-                                    localStorage.setItem('isStarted', false);
-                                    $('.online_status').prop('checked', false);
-                                    //app.startLocationTracking();
-                                    myApp.loginScreen();
-                                } else {
-                                    core.alert('Error', result.error, 'OK');
-                                }
-
-                            }
-                        });
-                    }
-                }
-            ]
-        });
+        myApp.closeModal();
+        maps.sendStatus(3);
+        localStorage.setItem(login.login_status, false);
+        localStorage.setItem('user_id', '');
+        localStorage.setItem('driver_id', '');
+        localStorage.setItem('full_name', '');
+        localStorage.setItem('email', '');
+        localStorage.setItem('mobile', '');
+        localStorage.setItem('driver_pic', '');
+        localStorage.setItem('isStarted', false);
+        $('.online_status').prop('checked', false);
+        //app.startLocationTracking();
+        myApp.loginScreen();
     },
 };

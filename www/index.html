@@ -83,14 +83,18 @@
                                 <!-- <div class="tracking_map_wrapper">
                                     <div id="mapcanvas" class="mapcanvas"></div>
                                 </div> -->
-                                <div class="time_wrapper flex flex-col content-center absolute w-screen">
-                                    <span class="work__desc text-xl top-150 w-screen text-center py-10" style="display:none;">Started at: 12345</span>
+                                <div class="time_wrapper flex flex-col content-center w-screen">
+                                    <span class="work__desc text-xl top-150 w-screen text-center py-3" style="display:none;">Started at: 12345</span>
                                     <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="btn--working py-3 bg-black text-white font-bold px-13 " style="margin: 10px auto;">
                                         <span>Start day</span>
                                     </a>
                                     
                                 </div>
                                 
+                                <div class="accordion-item" id="accordion__report">
+                                    <div class="accordion-item-toggle"></div>
+                                    <div class="accordion-item-content">Some text</div>
+                                </div>
                             </div>
                         </div>
 
@@ -162,11 +166,11 @@
                         <div class="mx-6">
                             <h2 class="text-xl font-bold text-center mb-6">Reports</h2>
                             <div class="content-block-title pl-0 ml-0">Select date to search</div>
-                            <div class="mb-30">
-                                <input type="text" id="reports-datepicker" placeholder="Select date" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono" readonly>
-                                <div class="w-full clearfix">
-                                    <button class="p-0 py-3 bg-black text-white text-center w-1/5 mt-3 float-right" onclick="reports.get_previous_reports();return false;" id="btnReportSearch">Search</button>
-                                </div>
+                            <div class="mb-30 flex ">
+                                <input type="text" id="reports-datepicker" placeholder="Select date" class="appearance-none mr-1 border-2 w-9/12 py-2 px-2 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 font-mono" readonly>
+                                
+                                    <button class="p-0 py-2 w-3/12 bg-black text-white text-center" onclick="reports.get_previous_reports();return false;" id="btnReportSearch">Search</button>
+                                
                             </div>
                             <div id="reports__search-result" class="list-block cards-list">
                                 <ul></ul>
@@ -179,44 +183,52 @@
                     <i class="pe-7s-angle-left"></i>
                     <span>&nbsp;Back</span>
                 </a>
-                <div class="">
-                    <h2 class="text-xl font-bold text-center mb-6" id="reports_heading">Save details and end day</h2>
-                    <p class="px-8">Started at: <strong><span id="ed__started_at"></span></strong></p>
-                    <p class="px-8">Ended at: <strong><span id="ed__ended_at"></span></strong></p>
-                    <!-- Close Popup -->
-                        <form id="frmEndDay" class="px-8 pt-1 pb-8 mb-4" onsubmit="reports.endday(this);return false;">
-                            <input type="hidden" name="started_at" value="">
-                            <input type="hidden" name="ended_at" value="">
-                            <input type="hidden" name="start_loc" value="">
-                            <input type="hidden" name="end_loc" value="">
-                            <div class="mb-1">
-                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
-                                        Number of trips
-                                </label>
-                                <input required type="number" name="no_of_trips" id="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                <div class="popup__inner-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="text-xl font-bold text-center reports_heading">Save details and end day</h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-content-inner">
+                                <p class="px-8">Started at: <strong><span id="ed__started_at"></span></strong></p>
+                                <p class="px-8">Ended at: <strong><span id="ed__ended_at"></span></strong></p>
+                                <form id="frmEndDay" class="px-8 pt-1 pb-8 mb-4" onsubmit="reports.endday(this);return false;">
+                                    <input type="hidden" name="started_at" value="">
+                                    <input type="hidden" name="ended_at" value="">
+                                    <input type="hidden" name="start_loc" value="">
+                                    <input type="hidden" name="end_loc" value="">
+                                    <div class="mb-1">
+                                        <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                                Number of trips
+                                        </label>
+                                        <input required type="number" name="no_of_trips" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                                Number of hours
+                                        </label>
+                                        <input required type="number" name="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
+                                                Mileage
+                                        </label>
+                                        <input type="number" name="mileage" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
+                                    </div>
+                                    <div class="flex items-center justify-center mt-4"> 
+                                        <button class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline" type="submit">
+                                            Save
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="mb-1">
-                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
-                                        Number of hours
-                                </label>
-                                <input required type="number" name="no_of_hours" id="no_of_hours" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
-                            </div>
-                            <div class="mb-1">
-                                <label class="block text-gray-700 text-sm font-bold p-0 m-0" for="no_of_trips">
-                                        Mileage
-                                </label>
-                                <input type="number" name="mileage" id="mileage" class="appearance-none border-2 w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono">
-                            </div>
-                            <div class="flex items-center justify-center mt-4"> 
-                                <button class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline" type="submit">
-                                    Save
-                                </button>
-                            </div>
-                        </form>
-                        
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.js"></script>
