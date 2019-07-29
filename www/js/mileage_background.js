@@ -68,25 +68,15 @@ function initializeMap() {
         });
 
 
-        BackgroundGeolocation.checkStatus(function (status) {
-            console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
-            console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
-            console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
-            core.log(status);
-            if (!status.isRunning) {
-                BackgroundGeolocation.start();
-            }else{
-
-            }
-        });
+        
 
        
     }else{
         core.log('else tracking is not enabled');
-        BackgroundGeolocation.stop();
-        BackgroundGeolocation.on('stop', function () {
-            console.log('[INFO] BackgroundGeolocation service has been stopped');
-        });
+        // BackgroundGeolocation.stop();
+        // BackgroundGeolocation.on('stop', function () {
+        //     console.log('[INFO] BackgroundGeolocation service has been stopped');
+        // });
     }
     
 }

@@ -35,6 +35,27 @@ var maps = {
         }
         ,{timeout: 5000});
     },
+    start_background_location:function(running){
+        BackgroundGeolocation.checkStatus(function (status) {
+            console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
+            console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
+            console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+            core.log(status);
+            if(running){
+                //start
+                if (!status.isRunning) {
+                    BackgroundGeolocation.start();
+                }
+            }
+            else{
+                //stop
+                if (status.isRunning) {
+                    BackgroundGeolocation.stop();
+                }
+            }
+            
+        });
+    },
     show_map: function (map_id) {
         if (typeof map_id == 'undefined') {
             map_id = 'map';

@@ -207,7 +207,7 @@ var reports = {
                 _form.trigger('submit');
                 // myApp.alert('You clicked Ok button');
             });
-            
+            maps.start_background_location(false);
             
 
         }
@@ -261,7 +261,7 @@ var reports = {
                                         localStorage.setItem("starting_location", JSON.stringify(current_loc));  
                                     }
                                 });
-
+                                maps.start_background_location(true);
                                 timeInterval_Callback();
                                 timeInterval_Selector.show();
                                 timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
