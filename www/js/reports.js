@@ -184,8 +184,8 @@ var reports = {
             _form.attr('data-target',_datatarget);
             
             core.log('data target: '+_datatarget);
-            _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('dd-mm-yyyy HH:MM:ss', true));
-            _form.find('[name="ended_at"]').val(new Date(_ended_at).format('dd-mm-yyyy HH:MM:ss', true));
+            _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('yyyy-mm-dd HH:MM:ss', true));
+            _form.find('[name="ended_at"]').val(new Date(_ended_at).format('yyyy-mm-dd HH:MM:ss', true));
             var _htmlElem = $('#popup-endday') ;
             
             _htmlElem.find('.reports_heading').text('Save details and end day');
@@ -194,15 +194,19 @@ var reports = {
             }
             var popupHTML = _htmlElem.wrap('<p/>').parent().html();
             _htmlElem.unwrap();
-            if(_datatarget==='btn--working'){
-                //popup__inner-content
-                var _accordionHTML = $(popupHTML).find('.popup__inner-content').html();
-                $('#accordion__report .accordion-item-content').html(_accordionHTML);
-                myApp.accordionToggle('#accordion__report');
-            }
-            else{
-                myApp.popup(popupHTML);
-            }
+            // if(_datatarget==='btn--working'){
+            //     //popup__inner-content
+            //     var _accordionHTML = $(popupHTML).find('.popup__inner-content').html();
+            //     $('#accordion__report .accordion-item-content').html(_accordionHTML);
+            //     myApp.accordionToggle('#accordion__report');
+            // }
+            // else{
+            //     myApp.popup(popupHTML);
+            // }
+            myApp.confirm('Are you sure?', function () {
+                _form.trigger('submit');
+                // myApp.alert('You clicked Ok button');
+            });
             
             
 

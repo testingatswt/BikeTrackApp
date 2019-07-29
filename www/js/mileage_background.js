@@ -11,6 +11,7 @@ var mapOptions = {
     disableDefaultUI: true,
 };
 function initializeMap() {
+    console.log('initializeMap called')
     var status = localStorage.getItem('isStarted');
     var driver_id = localStorage.getItem('driver_id');
     BackgroundGeolocation.configure(setCurrentLocation,{
@@ -26,9 +27,7 @@ function initializeMap() {
         fastestInterval: 5000,
         activitiesInterval: 10000,
         url: core.server + 'rider/store_location',
-        httpHeaders: {
-            'X-FOO': 'bar'
-        },
+        
         // customize post properties
         postTemplate: {
             lat: '@latitude',
@@ -43,13 +42,14 @@ function initializeMap() {
             // handle your locations here
             // to perform long running operation on iOS
             // you need to create background task
-             setCurrentLocation(location);
-            BackgroundGeolocation.startTask(function (taskKey) {
-                // execute long running task
-                // eg. ajax post location
-                // IMPORTANT: task has to be ended by endTask
-                BackgroundGeolocation.endTask(taskKey);
-            });
+             //setCurrentLocation(location);
+             storeLocationServer(location);
+            // BackgroundGeolocation.startTask(function (taskKey) {
+            //     // execute long running task
+            //     // eg. ajax post location
+            //     // IMPORTANT: task has to be ended by endTask
+            //     BackgroundGeolocation.endTask(taskKey);
+            // });
         });
 
 
