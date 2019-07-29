@@ -17,8 +17,8 @@ function initializeMap() {
     BackgroundGeolocation.configure(setCurrentLocation,{
         locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
         desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-        stationaryRadius: 0,
-        distanceFilter: 0,
+        stationaryRadius: 50,
+        distanceFilter: 50,
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
         debug: false,
@@ -52,7 +52,16 @@ function initializeMap() {
             // });
         });
 
-
+        BackgroundGeolocation.on('error', function(error) {
+            console.log('[ERROR] BackgroundGeolocation error:', error.code, error.message);
+          });
+          BackgroundGeolocation.on('start', function() {
+            console.log('[INFO] BackgroundGeolocation service has been started');
+          });
+        
+          BackgroundGeolocation.on('stop', function() {
+            console.log('[INFO] BackgroundGeolocation service has been stopped');
+          });
         BackgroundGeolocation.on('authorization', function (status) {
             console.log('[INFO] BackgroundGeolocation authorization status: ' + status);
             if (status !== BackgroundGeolocation.AUTHORIZED) {
