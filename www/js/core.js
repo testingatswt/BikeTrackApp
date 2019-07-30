@@ -9,6 +9,8 @@ const _server = 'http://68.183.189.31/api/', // api url
                             "version": "1.0.1"
                         }
                     */
+                   
+
 
 var userLoggedIn = false;
 var myApp = new Framework7({ //

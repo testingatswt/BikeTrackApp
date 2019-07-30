@@ -2,9 +2,7 @@ var map=null,
     directionsDisplay=null,
     directionsService=null;
 var $$ = Dom7;
-$(document).ready(function (e) {
-    app.startLocationTracking();
-});
+
 
 var maps = {
     current_map: '',

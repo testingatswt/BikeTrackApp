@@ -47,22 +47,16 @@ var app = {
         }
     },
     startLocationTracking: function(){
-        maps.setCurrentLocation(function(err,current_loc){
-            if(err) core.log(err);
-            maps.show_map('mapcanvas');
-        });
+        // maps.setCurrentLocation(function(err,current_loc){
+        //     if(err) core.log(err);
+        //     maps.show_map('mapcanvas');
+        // });
         
-        var status = localStorage.getItem('isStarted');
-        if(status == true || status == 'true'){
-            $('.online_status').prop('checked',true);
-        }
-        if(typeof BackgroundGeolocation === "undefined"){
-            setTimeout(function(){
-                initializeMap();
-            },500); 
-        }else{
-            initializeMap();
-        }
+        // var status = localStorage.getItem('isStarted');
+        // if(status == true || status == 'true'){
+        //     $('.online_status').prop('checked',true);
+        // }
+        //initializeMap();
         
         
     },

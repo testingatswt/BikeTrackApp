@@ -203,11 +203,11 @@ var reports = {
             // else{
             //     myApp.popup(popupHTML);
             // }
-            myApp.confirm('Are you sure?', function () {
+            myApp.confirm('Do you want to end your day?', 'Message',function () {
+                maps.start_background_location(false);
                 _form.trigger('submit');
-                // myApp.alert('You clicked Ok button');
             });
-            maps.start_background_location(false);
+            
             
 
         }
@@ -285,6 +285,7 @@ var reports = {
         var isRidingStarted = localStorage.getItem("isRidingStarted");
         if(typeof isRidingStarted === "undefined") isRidingStarted = false;
         if(isRidingStarted==="true" || isRidingStarted === true){//started...
+            maps.start_background_location(true);
             timeInterval_Callback();
             timeInterval_Selector.show();
             timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
@@ -292,7 +293,11 @@ var reports = {
         }
     }
 }
-reports.checkIfStartRiding('#btn--working');
+$(window).on('load',function (e) {
+    initializeMap();
+    reports.checkIfStartRiding('#btn--working');
+});
+
 
 reports.reports___datePicker = myApp.calendar({
     input: '#reports-datepicker',

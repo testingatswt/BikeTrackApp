@@ -17,12 +17,12 @@ function initializeMap() {
     BackgroundGeolocation.configure(setCurrentLocation,{
         locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
         desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-        stationaryRadius: 50,
-        distanceFilter: 50,
+        stationaryRadius: 1,
+        distanceFilter: 1,
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
         debug: false,
-        // stopOnTerminate: false,
+        stopOnTerminate: false,
         interval: 15000,
         fastestInterval: 5000,
         activitiesInterval: 10000,
@@ -36,13 +36,12 @@ function initializeMap() {
         }
     });
     core.log('i m inside tracking');
-    if(status == true || status == 'true'){
-        core.log('if tracking enabled');
         BackgroundGeolocation.on('location', function (location) {
             // handle your locations here
             // to perform long running operation on iOS
             // you need to create background task
              //setCurrentLocation(location);
+             core.log('[Background Location] Location recieved');
              storeLocationServer(location);
             // BackgroundGeolocation.startTask(function (taskKey) {
             //     // execute long running task
@@ -78,15 +77,7 @@ function initializeMap() {
 
 
         
-
-       
-    }else{
-        core.log('else tracking is not enabled');
-        // BackgroundGeolocation.stop();
-        // BackgroundGeolocation.on('stop', function () {
-        //     console.log('[INFO] BackgroundGeolocation service has been stopped');
-        // });
-    }
+    
     
 }
 
