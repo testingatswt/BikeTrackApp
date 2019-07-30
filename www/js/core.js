@@ -1,6 +1,6 @@
 // Initialize app
 const _server = 'http://68.183.189.31/api/', // api url 
-      _appVersion = '1.1.1', // change this when updating app
+      _appVersion = '1.1.2', // change this when updating app
       _apkFileUrl='http://68.183.189.31/application/Dorbean.apk',
       _appVersionUrl="http://68.183.189.31/application/version.json";
                     /** 
