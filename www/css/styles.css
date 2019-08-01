@@ -324,3 +324,6 @@ a{
     width: 58%;
     text-align: left;
 } */
+#app_overlay{
+    z-index:999;
+}

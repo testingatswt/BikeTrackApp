@@ -167,18 +167,7 @@ var reports = {
             var _ended_atFORMAT = new Date(_ended_at);
             $('#ed__ended_at').text(_ended_atFORMAT.format('mmm dd, yyyy hh:MM TT'));
             
-            if(typeof _started_loc !== "undefined"){
-                _form.find('[name="start_loc"]').val(_started_loc);
-                maps.getCurrentLocation(function(err, current_loc){
-                    if(err) core.log(err)
-                    if(current_loc){
-                        // $('#ed__start_loc').html('<a href="#"  data-start-loc="'+_started_loc+'" data-end-loc="'+JSON.stringify(current_loc)+'" class="ed__startEndLoc">Click to see</a>');
-                        _end_loc=JSON.stringify(current_loc);
-                        core.log(_end_loc);
-                        _form.find('[name="end_loc"]').val(_end_loc);
-                    }
-                });
-            }
+            
 
             
             _form.attr('data-target',_datatarget);
@@ -203,10 +192,46 @@ var reports = {
             // else{
             //     myApp.popup(popupHTML);
             // }
-            myApp.confirm('Do you want to end your day?', 'Message',function () {
-                maps.start_background_location(false);
-                _form.trigger('submit');
-            });
+            myApp.showPreloader("Please Wait..");
+            if(typeof _started_loc !== "undefined"){
+                _form.find('[name="start_loc"]').val(_started_loc);
+                maps.getCurrentLocation(function(err, current_loc){
+                    
+                    if(err) {
+                        //trying again..
+                        maps.getCurrentLocation(function(err, current_loc){
+                            myApp.hidePreloader();
+                            if(err) myApp.alert(err, 'Error');
+                            if(current_loc){
+                                _end_loc=JSON.stringify(current_loc);
+                                core.log(_end_loc);
+                                _form.find('[name="end_loc"]').val(_end_loc);
+                                
+                                myApp.confirm('Do you want to end your day?', 'Message',function () {
+                                    maps.start_background_location(false);
+                                    _form.trigger('submit');
+                                });
+                            }
+                        })
+                    }
+                    else{
+                        myApp.hidePreloader();
+                        if(current_loc){
+                            // $('#ed__start_loc').html('<a href="#"  data-start-loc="'+_started_loc+'" data-end-loc="'+JSON.stringify(current_loc)+'" class="ed__startEndLoc">Click to see</a>');
+                            _end_loc=JSON.stringify(current_loc);
+                            core.log(_end_loc);
+                            _form.find('[name="end_loc"]').val(_end_loc);
+                            
+                            myApp.confirm('Do you want to end your day?', 'Message',function () {
+                                _form.trigger('submit');
+                                maps.start_background_location(false);
+                            });
+                        }
+                    }
+                });
+            }
+            
+            
             
             
 
@@ -219,7 +244,7 @@ var reports = {
                 localStorage.removeItem("isRidingStarted");
                 localStorage.removeItem("riding_start_time");
                 localStorage.removeItem("starting_location");
-                $('#btn--working').text('Start day').addClass('color-blue');
+                $('#btn--working').text('Start day');
                 localStorage.setItem(login.login_status, false);
                 localStorage.setItem('user_id', '');
                 localStorage.setItem('driver_id', '');
@@ -284,20 +309,21 @@ var reports = {
         clearInterval(timeInterval_Timer);
         var isRidingStarted = localStorage.getItem("isRidingStarted");
         if(typeof isRidingStarted === "undefined") isRidingStarted = false;
+        core.log(isRidingStarted);
         if(isRidingStarted==="true" || isRidingStarted === true){//started...
+            $self.text('End day').removeClass('color-blue');
             maps.start_background_location(true);
             timeInterval_Callback();
             timeInterval_Selector.show();
             timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
-            $self.text('End day').removeClass('color-blue');
         }
     }
 }
 $(window).on('load',function (e) {
-    initializeMap();
     reports.checkIfStartRiding('#btn--working');
+    initializeMap();
+    
 });
-
 
 reports.reports___datePicker = myApp.calendar({
     input: '#reports-datepicker',

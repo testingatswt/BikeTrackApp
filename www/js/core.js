@@ -1,6 +1,5 @@
 // Initialize app
-const _server = 'http://68.183.189.31/api/', // api url 
-      _appVersion = '1.1.2', // change this when updating app
+const _server = 'http://68.183.189.31/api/', // api url
       _apkFileUrl='http://68.183.189.31/application/Dorbean.apk',
       _appVersionUrl="http://68.183.189.31/application/version.json";
                     /** 
@@ -10,7 +9,6 @@ const _server = 'http://68.183.189.31/api/', // api url
                         }
                     */
                    
-
 
 var userLoggedIn = false;
 var myApp = new Framework7({ //
@@ -44,7 +42,7 @@ var core = {
     domain: 'misto.alrasub.com',
 //    server: 'http://www.eshmar.com/dev/biketrack/public/api/',
     server: _server,
-    app_version: _appVersion,
+    app_version: '',
     app_version_url: _appVersionUrl,
     isUpdating:false,
     apk_url: _apkFileUrl,
@@ -80,36 +78,160 @@ var core = {
     },
     checkForUpdate: function(){
         if(!core.isUpdating){
-            core.isUpdating = true;
             setTimeout(function(){ 
                 $$.ajaxSetup({cache: false});
                 $$.getJSON(core.app_version_url, function (response) {
                     var _version = response.version;
-                    var _isVersion = helpers.compareVersionNumbers(core.app_version,_version)
-                    core.log("Version: "+_isVersion);
-                    if(_isVersion === -1){//need to update
-                        myApp.modal({
-                            title:  'Outdated',
-                            text: 'Your app is outdated, please update.',
-                            buttons: [
-                              {
-                                text: 'Update',
-                                onClick: function() {
-                                    if (core.isOnline()) {
-                                        var url = core.apk_url;
-                                        if (core.deviceType() == 'iphone') {
-                                            core.openIosExternalLink(url);
-                                        } else {
-                                            core.openAndroidExternalLink(url);
-                                        }
-                                        core.isUpdating = false;
-                                    }
+                    cordova.getAppVersion(function(app_version) {
+                        core.app_version=app_version;
+                        var _isVersion = helpers.compareVersionNumbers(app_version,_version)
+                        core.log("Version: "+_isVersion);
+                        if(_isVersion === -1){//need to update
+                            core.isUpdating=true;
+                            var permissions = cordova.plugins.permissions;
+                            permissions.checkPermission(permissions.WRITE_EXTERNAL_STORAGE, function(status) {
+                                if (!status.hasPermission) {
+                                    var errorCallback = function() {
+                                        core.isUpdating=false;
+                                        alert("App requires storage permission to update");
+                                    };
+                                    permissions.requestPermission(permissions.WRITE_EXTERNAL_STORAGE,
+                                        function(status) {
+                                            if (!status.hasPermission)
+                                                errorCallback();
+                                            else {
+                                                initUpdate();
+                                            }
+                                        },
+                                        errorCallback);
+                                } else {
+                                    initUpdate();
                                 }
-                              }
-                            ]
-                        })  
-                    }
-                    core.isUpdating = false;
+                            }, null);
+                            var initUpdate = function() {
+                                var pBar=null;
+                                window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function(fileSystem) {
+                                    var entry = "";
+                                    entry = fileSystem;
+                                    entry.getDirectory("kingridersapp_updates", {
+                                        create: true,
+                                        exclusive: false
+                                    }, onGetDirectorySuccess, onGetDirectoryFail);
+                                    function onGetDirectorySuccess(dir) {
+                                        downloadFile(dir);
+                                    };
+                                    function onGetDirectoryFail(err) {
+                                        if(pBar) myApp.closeModal(pBar);
+                                        core.isUpdating=false;
+                                        core.log("[Updating] error: "+err);
+                                    }
+                                    var downloadFile = function(fileSystem) {
+                                        var fileUri = fileSystem.nativeURL;
+                                        window.resolveLocalFileSystemURL(
+                                            fileUri,
+                                            onFileResolved,
+                                            onFileResolveError);
+            
+                                        function onFileResolved(fe) {
+                                            fe.getFile('KingridersApp_v'+_version+'.apk', {
+                                                create: true,
+                                                exclusive: false
+                                            }, function(fileEntry) {
+                                                core.log("[Updating] apk donwload started");
+                                                var localPath = fileEntry.toURL(),
+                                                    fileTransfer = new FileTransfer();
+                                                pBar=myApp.modal({
+                                                    title: 'Updating',
+                                                    text: 'Please wait while app is updating..',
+                                                    afterText:'<p class="progress_bar my-5"></p>',
+                                                });
+                                                var container = $$(pBar).find('.progress_bar');
+                                                    
+                                                // Simluate Loading Something
+                                                var progress = 0;
+                                                if (container.children('.progressbar').length <=0){
+                                                    myApp.showProgressbar(container, 0, 'orange');
+                                                }
+                                                fileTransfer.onprogress = function(progressEvent) {
+                                                    
+                                                    if (progressEvent.lengthComputable) {
+                                                        progress = (progressEvent.loaded / progressEvent.total)*100;
+                                                    } else {
+                                                        progress++;
+                                                    }
+                                                    core.log("[Updating] progress: "+progress);
+                                                    myApp.setProgressbar(container, progress);
+                                                };
+                                                var apkURL = encodeURI(core.apk_url);
+                                                fileTransfer.download(apkURL, localPath, function(entry) {
+                                                    core.log("[Updating] apk download complete");
+                                                    
+                                                    cordova.plugins.fileOpener2.open(
+                                                        entry.toURL(),
+                                                        'application/vnd.android.package-archive',
+                                                        {
+                                                            error : function(e) {
+                                                                core.log('[Updating] Error status: ' + e.status + ' - Error message: ' + e.message);
+                                                            },
+                                                            success : function () {
+                                                                core.log('[Updating] file opened successfully');
+                                                            }
+                                                        }
+                                                    );
+                                                   // myApp.hideProgressbar(container);
+                                                    if(pBar) myApp.closeModal(pBar);
+                                                    core.isUpdating = false;
+                                                    core.log("[Updating] apk installation triggered");
+                                                }, function(error) {
+                                                    core.isUpdating = false;
+                                                    if(pBar) myApp.closeModal(pBar);
+                                                    core.log("[Updating] Error downloading APK: " + error.message);
+                                                });
+                                            }, function(evt) {
+                                                if(pBar) myApp.closeModal(pBar);
+                                                core.isUpdating = false;
+                                                core.log("[Updating] error getting root filesytem: " + evt);
+                                            });
+                                            core.log("[Updating] resovled the root folder,URL" + fe.toURL())
+                                        }
+            
+                                        function onFileResolveError(er) {
+                                            core.isUpdating = false;
+                                            if(pBar) myApp.closeModal(pBar);
+                                            core.log("[Updating] Error while resolving the root folder:" + er.message)
+                                        }
+                                    };
+                                }, function(evt) {
+                                    core.isUpdating = false;
+                                    if(pBar) myApp.closeModal(pBar);
+                                    alert("Error preparing to download the latest updates! - Err - " + evt.target.error.code);
+                                    
+                                });
+                            }
+
+
+                            // myApp.modal({
+                            //     title:  'Outdated',
+                            //     text: 'Your app is outdated, please update.',
+                            //     buttons: [
+                            //       {
+                            //         text: 'Update',
+                            //         onClick: function() {
+                            //             if (core.isOnline()) {
+                            //                 var url = core.apk_url;
+                            //                 if (core.deviceType() == 'iphone') {
+                            //                     core.openIosExternalLink(url);
+                            //                 } else {
+                            //                     core.openAndroidExternalLink(url);
+                            //                 }
+                            //                 core.isUpdating = false;
+                            //             }
+                            //         }
+                            //       }
+                            //     ]
+                            // })  
+                        }
+                    });
                 });
             }, 0);
         }

@@ -22,7 +22,9 @@ var maps = {
         , {timeout: 5000});
     },
     getCurrentLocation: function (callback) {
+        
         navigator.geolocation.getCurrentPosition(function (position) {
+            
             currentLattitude = position.coords.latitude;
             currentLongitude = position.coords.longitude;
             var current_loc = {lat: currentLattitude, lng: currentLongitude};
