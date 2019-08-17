@@ -1,0 +1,18 @@
+{
+    "android": {
+        "debug": {
+            "keystore": "solutionwin.keystore",
+            "storePassword": "solutionwin123",
+            "alias": "solutionwinapps",
+            "password" : "solutionwin123",
+            "keystoreType": ""
+        },
+        "release": {
+            "keystore": "solutionwin.keystore",
+            "storePassword": "solutionwin123",
+            "alias": "solutionwinapps",
+            "password" : "solutionwin123",
+            "keystoreType": ""
+        }
+    }
+}
