@@ -28,49 +28,82 @@ var reports = {
             _dates.push(new Date(_v).format('dd-mm-yyyy'));
          });
          var __data ={date:_dates[0], rider_id:driver_id};
-         var url="get-reports";
+         var url="get-trips";
          core.postRequest(url, __data, function (response, status) {
             core.log('reports_status: '+status);
             core.log(response);
             if(status==="success"){
                 var result = JSON.parse(response);
                 if(result.status==="success"){
-                    var _reports = result.reports;
-                    if(_reports.length > 0){
-                        core.log(_reports);  
-                        _reports.forEach(function(report,_i){
-                            var _card = $('<li class="card" />');
+                    var _report = result.reports;
+                    
+                        core.log(_report);  
+                        var _card = $('<li class="card" />');
                             var _cardHeader = $('<div class="card-header" />');
                             var _cardContent = $('<div class="card-content" />');
                             var _cardContentInner = $('<div class="card-content-inner" />');
                             var _timingHTML = '';
-                            if(report.start_time && report.start_time!=='null' && report.end_time && report.end_time!=='null'){
-                                _timingHTML+=new Date(report.start_time+' UTC').format("hh:MM tt");
-                                _timingHTML+=' - '+new Date(report.end_time+' UTC').format("hh:MM tt");
+                            var no_of_trips = 0;
+                            var isEmpty = true;
+                            if(_report!==null){
+                                if(_report.no_of_trips!=null){
+                                    no_of_trips = _report.no_of_trips;
+                                    isEmpty = false;
+                                }
+                            } 
+                            core.log("empty: "+isEmpty); 
+                            var _html='';
+                            if(isEmpty){
+                            _html =  '     '  + 
+                            '<div class="w-full">    '  + 
+                            '    <div class="w-full text-center font-bold mb-3">  '  + 
+                            '       <div class="block my-7">  '  + 
+                            '           <span class="trip_text text-2xl" data-trips="'+no_of_trips+'">'+no_of_trips+'</span>&nbsp;Trips  '  + 
+                            '       </div>  '  + 
+                            '       <div class="accordion-item">  '  + 
+                            '       <div class="accordion-item-toggle">  '  + 
+                            '           <button class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline">  '  + 
+                            '               Add Trip  '  + 
+                            '           </button>  '  +
+                            '           </div>  '  + 
+                            '           <div class="accordion-item-content">  '  + 
+                            '               <form id="frmTrip" class="px-8 pt-5" onsubmit="reports.addtrip(this);return false;">  '  + 
+                            '                   <div class="flex">  '  + 
+                            '                       <input type="text" name="no_of_trips" placeholder="Enter trips" class="appearance-none mr-1 border-2 w-9/12 py-2 px-2 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 font-mono">  '  + 
+                            '                       <button type="submit" class="p-0 py-2 w-3/12 bg-blue-700 text-white text-center">Save</button>  '  + 
+                            '                                                                 '  + 
+                            '                   </div>  '  + 
+                            '               </form>  '  + 
+                            '           </div>  '  + 
+                            '       </div>  '  + 
+                            '   </div>    '  + 
+                            '</div>   '  ; 
                             }
-                            var _hrt = (parseFloat(report.online_hours)*1000).millisecondsToHumanreadable();
-                            var _html =  '     '  + 
-                            '    <div class="w-full">  '  + 
-                            '       <div class="w-full text-center font-bold mb-3">  '  + 
-                            '           <span>'+_timingHTML+'</span>  '  + 
-                            '       </div>  '  + 
-                            '       <div class="">  '  + 
-                            '           <label>Number of trips: </label>  '  + 
-                            '           <span>'+report.no_of_trips+'</span>  '  + 
-                            '       </div>  '  + 
-                            '       <div class="">  '  + 
-                            '           <label>Number of hours: </label>  '  + 
-                            '           <span>'+report.no_of_hours+'</span>  '  + 
-                            '       </div>  '  + 
-                            '       <div class="">  '  + 
-                            '           <label>Milage: </label>  '  + 
-                            '           <span>'+report.mileage+'</span>  '  + 
-                            '       </div>  '  + 
-                            '       <div class="">  '  + 
-                            '           <label>Online for: </label>  '  + 
-                            '           <span>'+_hrt+'</span>  '  + 
-                            '       </div>  '  + 
-                            '  </div>  ' ; 
+                            else{
+                                _html=''+
+                                '   <div class="w-full">    '  + 
+                                '     <div class="w-full text-center font-bold mb-3 reports__card-inner">  '  + 
+                                '       <form onsubmit="reports.update_trip(this);return false;">  '  + 
+                                '         <div class="block my-7">  '  + 
+                                '             <div class="flex justify-center content-center">   '  + 
+                                '                 <input type="hidden" name="trip_id" value="'+_report.id+'">   '  + 
+                                '                 <input type="text" name="no_of_trips" value="'+no_of_trips+'" readonly class="text-center appearance-none mr-1 border-2 w-12 py-2 px-2 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 font-mono">  '  + 
+                                '                 <span class="pt-1 text-xl">Trips</span>  '  + 
+                                '             </div>  '  + 
+                                '                                                     '  + 
+                                '         </div>  '  + 
+                                '         <div class="flex justify-center content-center">   '  + 
+                                '             <button disabled type="submit" class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline">  '  + 
+                                '                 Update  '  + 
+                                '             </button>  '  + 
+                                '             <a href="#" class="reports__btn-edit bg-blue-700 w-10 text-white py-2 mx-5">  '  + 
+                                '                 <i class="f7-icons">edit</i>  '  + 
+                                '             </a>  '  + 
+                                '         </div>  '  + 
+                                '       </form>  '  + 
+                                '     </div>    '  + 
+                                '   </div>   ' ;
+                            }
                             _cardContentInner.append(_html);
 
 
@@ -79,26 +112,134 @@ var reports = {
                             _cardContent.append(_cardContentInner);
                             _card.append(_cardContent);
                             _result_container.append(_card);
-                        });
-                    }
-                    else{
-                        var _card = $('<li class="card" />');
-                        var _cardHeader = $('<div class="card-header" />');
-                        var _cardContent = $('<div class="card-content" />');
-                        var _cardContentInner = $('<div class="card-content-inner" />');
+                    //     _reports.forEach(function(report,_i){
+                    //         var _card = $('<li class="card" />');
+                    //         var _cardHeader = $('<div class="card-header" />');
+                    //         var _cardContent = $('<div class="card-content" />');
+                    //         var _cardContentInner = $('<div class="card-content-inner" />');
+                    //         var _timingHTML = '';
+                    //         if(report.start_time && report.start_time!=='null' && report.end_time && report.end_time!=='null'){
+                    //             _timingHTML+=new Date(report.start_time+' UTC').format("hh:MM tt");
+                    //             _timingHTML+=' - '+new Date(report.end_time+' UTC').format("hh:MM tt");
+                    //         }
+                    //         var _hrt = (parseFloat(report.online_hours)*1000).millisecondsToHumanreadable();
+                    //         // var _html =  '     '  + 
+                    //         // '    <div class="w-full">  '  + 
+                    //         // '       <div class="w-full text-center font-bold mb-3">  '  + 
+                    //         // '           <span>'+_timingHTML+'</span>  '  + 
+                    //         // '       </div>  '  + 
+                    //         // '       <div class="">  '  + 
+                    //         // '           <label>Number of trips: </label>  '  + 
+                    //         // '           <span>'+report.no_of_trips+'</span>  '  + 
+                    //         // '       </div>  '  + 
+                    //         // '       <div class="">  '  + 
+                    //         // '           <label>Number of hours: </label>  '  + 
+                    //         // '           <span>'+report.no_of_hours+'</span>  '  + 
+                    //         // '       </div>  '  + 
+                    //         // '       <div class="">  '  + 
+                    //         // '           <label>Milage: </label>  '  + 
+                    //         // '           <span>'+report.mileage+'</span>  '  + 
+                    //         // '       </div>  '  + 
+                    //         // '       <div class="">  '  + 
+                    //         // '           <label>Online for: </label>  '  + 
+                    //         // '           <span>'+_hrt+'</span>  '  + 
+                    //         // '       </div>  '  + 
+                    //         // '  </div>  ' ; 
+                    //         var no_of_trips = 0;
+                    //         var isEmpty = true;
+                    //         if(report.no_of_trips&&report.no_of_trips!=='null'){
+                    //             no_of_trips = report.no_of_trips;
+                    //             isEmpty = false;
+                    //         } 
+                    //         var _html =  '     '  + 
+                    //         '    <div class="w-full">  '  + 
+                    //         '       <div class="w-full text-center font-bold mb-3">  '  + 
+                    //         '           <span>'++' trips</span>  '  + 
+                    //         '       </div>  '  + 
+                    //         '  </div>  ' ; 
+                    //         _cardContentInner.append(_html);
 
-                        var _html = '<span class="text-center w-full font-bold">No record found</span>';
-                        _cardContentInner.append(_html);
-                        _cardContent.append(_cardContentInner);
-                        _card.append(_cardContent);
-                        _result_container.append(_card);
-                    }
+
+
+
+                    //         _cardContent.append(_cardContentInner);
+                    //         _card.append(_cardContent);
+                    //         _result_container.append(_card);
+                    //     });
+                    // }
+                    // else{
+                    //     var _card = $('<li class="card" />');
+                    //     var _cardHeader = $('<div class="card-header" />');
+                    //     var _cardContent = $('<div class="card-content" />');
+                    //     var _cardContentInner = $('<div class="card-content-inner" />');
+
+                    //     var _html = '<span class="text-center w-full font-bold">No record found</span>';
+                    //     _cardContentInner.append(_html);
+                    //     _cardContent.append(_cardContentInner);
+                    //     _card.append(_cardContent);
+                    //     _result_container.append(_card);
+                    // }
+                    
                 }
             }
             core.log(status);
          });
 
         }
+    },
+    update_trip:function($form){
+        var _form = $($form);
+        var driver_id = localStorage.getItem('driver_id');
+        var __data = helpers.getFormData(_form);
+        __data.rider_id=driver_id;
+        var _datePickerValue = reports.reports___datePicker.value; 
+        var _dates = [];
+        _datePickerValue.forEach(function(_v,_i){
+            _dates.push(new Date(_v).format('yyyy-mm-dd HH:MM:ss'));
+        });
+        __data.date=_dates[0];
+        var _datatarget=_form.attr('data-target');
+        if(typeof _datatarget!== "undefined" && _datatarget !== false && _datatarget !== '')_datatarget=_datatarget;
+        else _datatarget='none';
+        var url = "update-trip";
+        core.postRequest(url, __data, function (response, status) {
+            core.log(response);
+            var result = JSON.parse(response);
+            if(status==="success"){
+                if(result.status==="success"){
+                    reports.get_previous_reports();
+                    return;
+                }
+            }
+            myApp.alert("An error occured, please try again.", 'Error'); 
+        });
+    },
+    addtrip: function($form){
+        var _form = $($form);
+        var driver_id = localStorage.getItem('driver_id');
+        var __data = helpers.getFormData(_form);
+        __data.rider_id=driver_id;
+        var _datePickerValue = reports.reports___datePicker.value; 
+        var _dates = [];
+        _datePickerValue.forEach(function(_v,_i){
+            _dates.push(new Date(_v).format('yyyy-mm-dd HH:MM:ss'));
+        });
+        __data.date=_dates[0];
+        var _datatarget=_form.attr('data-target');
+        if(typeof _datatarget!== "undefined" && _datatarget !== false && _datatarget !== '')_datatarget=_datatarget;
+        else _datatarget='none';
+        var url = "add-trip";
+        core.postRequest(url, __data, function (response, status) {
+            core.log(response);
+            var result = JSON.parse(response);
+            if(status==="success"){
+                if(result.status==="success"){
+                    reports.get_previous_reports();
+                    return;
+                }
+            }
+            myApp.alert("An error occured, please try again.", 'Error'); 
+        });
     },
     endday:function($form){ 
         var _form = $($form);
@@ -112,6 +253,22 @@ var reports = {
         else _datatarget='none';
         var url = "endday";
         core.postRequest(url, __data, function (response, status) {
+            
+            BackgroundGeolocation.getLocations(function(locations){
+                core.log(locations);
+                if(locations.length > 0){
+                    myApp.showPreloader("Syncing locations...");
+                    var driver_id = localStorage.getItem('driver_id');
+                    locations.forEach(function(x){x.time=new Date(x.time).format('yyyy-mm-dd HH:MM:ss', true)});
+                    var _data = {rider_id: driver_id, locations: locations};
+                    var url = 'rider/store_sync_location';
+                    core.postRequest(url, _data, function (res, s) {
+                        myApp.hidePreloader();
+                        BackgroundGeolocation.deleteAllLocations();
+                    }, 'no');
+                }
+            });
+
             var result = JSON.parse(response);
             if(status==="success"){
                 if(result.status==="success"){
@@ -328,5 +485,11 @@ $(window).on('load',function (e) {
 reports.reports___datePicker = myApp.calendar({
     input: '#reports-datepicker',
     dateFormat: 'DD, MM dd, yyyy'
+});
+
+$('body').on('click', '.reports__btn-edit', function(){
+    $(this).parents('form').find('input').prop('readonly', false);
+    $(this).parents('form').find('[type="submit"]').prop('disabled', false);
+    $(this).hide();
 });
 

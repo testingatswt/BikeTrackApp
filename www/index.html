@@ -18,6 +18,7 @@
         <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
         <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
         <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/f7-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.0.5/tailwind.min.css">
     </head>
 
@@ -40,7 +41,7 @@
                         <a href="#" class="close-panel row open-popup" data-popup="#popup-reports">
                             <div class="col-33"><i class="pe-7s-graph3"></i></div>
                             <div class="col-66">
-                                Reports
+                                Trips
                             </div>
                         </a>
                     </div>
@@ -89,14 +90,30 @@
                                     <a href="#" onclick="reports.startRiding(this);return false;" data-target="btn--working" id="btn--working" class="btn--working w-3/5 mx-auto p-0 m-0 py-10 text-xl text-center bg-black text-white font-bold ">
                                         <span>Start day</span>
                                     </a>
+                                    <!-- <div class="w-full bg-white">  
+                                        <div class="w-full text-center font-bold mb-3">
+                                            <div class="block my-7">
+                                                <div class="flex justify-center content-center"> 
+                                                    <input type="text" value="3" readonly id="trips_input" class="text-center appearance-none mr-1 border-2 w-12 py-2 px-2 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 font-mono">
+                                                    <span class="pt-1 text-xl">Trips</span>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="flex justify-center content-center"> 
+                                                <button onclick="reports.updateReport(3);return false;" class="w-1/2 bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline">
+                                                    Update
+                                                </button>
+                                                <button onclick="document.getElementById('trips_input').removeAttribute('readonly');this.style.display='none';" class="bg-blue-700 w-10 text-white py-2 mx-5">
+                                                    <i class="f7-icons">edit</i>
+                                                </button>
+                                            </div>
+                                        </div>  
+                                    </div>   -->
                                     <span class="work__desc text-xl w-screen text-center m-0" style="display:none;">Started at: 12345</span>
                                     
                                 </div>
                                 
-                                <div class="accordion-item" id="accordion__report">
-                                    <div class="accordion-item-toggle"></div>
-                                    <div class="accordion-item-content">Some text</div>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -156,7 +173,7 @@
                         </div>
                     </div>
                 </div>
-        
+                   
             </div>
         </div>
         <!-- Modals -->
@@ -168,15 +185,14 @@
                             <span>&nbsp;Back</span>
                         </a>
                         <div class="mx-6">
-                            <h2 class="text-xl font-bold text-center mb-6">Reports</h2>
+                            <h2 class="text-xl font-bold text-center mb-6">Trips</h2>
                             <div class="content-block-title pl-0 ml-0">Select date to search</div>
                             <div class="mb-30 flex ">
                                 <input type="text" id="reports-datepicker" placeholder="Select date" class="appearance-none mr-1 border-2 w-9/12 py-2 px-2 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 font-mono" readonly>
-                                
-                                    <button class="p-0 py-2 w-3/12 bg-black text-white text-center" onclick="reports.get_previous_reports();return false;" id="btnReportSearch">Search</button>
+                                <button class="p-0 py-2 w-3/12 bg-black text-white text-center" onclick="reports.get_previous_reports();return false;" id="btnReportSearch">Search</button>
                                 
                             </div>
-                            <div id="reports__search-result" class="list-block cards-list">
+                            <div id="reports__search-result" class="cards-list">
                                 <ul></ul>
                             </div>
                         </div>

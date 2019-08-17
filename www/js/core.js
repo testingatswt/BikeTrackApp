@@ -1,7 +1,11 @@
 // Initialize app
-const _server = 'http://68.183.189.31/api/', // api url
-      _apkFileUrl='http://68.183.189.31/application/Dorbean.apk',
-      _appVersionUrl="http://68.183.189.31/application/version.json";
+const server_url= 'http://68.183.189.31'; // like https://www.example.com
+//http://68.183.189.31
+//https://kingridersapp.solutionwin.net
+
+const _server = server_url+'/api/', // api url
+      _apkFileUrl=server_url+'/application/Dorbean.apk',
+      _appVersionUrl=server_url+"/application/version.json";
                     /** 
                      * version format:
                      *  {
@@ -324,6 +328,7 @@ var core = {
                 url: req_url,
                 context: document.body,
                 data: post_data,
+                dataType:'JSON', 
                 method: "POST"
             })
             .done(function(data) {  
@@ -343,13 +348,17 @@ var core = {
                 if (show_spinner == 'yes') {
                     myApp.hideIndicator();
                 }
+                core.log(xhr);
                 core.log(xhr.status + ': ' + xhr.statusText);
                 //Ajax request failed.
-                if(xhr.status===404){
+                if(xhr.status===404){ // page not found
                     //logout
                    login.logout();
                    myApp.alert('Your session is expired. Please login.', 'Session expired');
                    return false;
+                }
+                if(xhr.status===400){ // server side error
+                    myApp.alert('A server side error occurs. Please contact the admin', 'Error');
                 }
                 callback(JSON.stringify(data), 'error');
             });

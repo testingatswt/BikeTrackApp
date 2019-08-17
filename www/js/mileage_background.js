@@ -14,24 +14,34 @@ function initializeMap() {
     console.log('initializeMap called')
     var status = localStorage.getItem('isStarted');
     var driver_id = localStorage.getItem('driver_id');
-    BackgroundGeolocation.configure(setCurrentLocation,{
+    BackgroundGeolocation.configure({
         locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
         desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-        stationaryRadius: 1,
+        stationaryRadius: 5,
         distanceFilter: 1,
+        // notificationIconColor: "#4CAF50",
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
         debug: false,
         stopOnTerminate: false,
-        interval: 15000,
-        fastestInterval: 5000,
-        activitiesInterval: 10000,
+        interval: 60000,
+        fastestInterval: 15000,
+        activitiesInterval: 60000,
         url: core.server + 'rider/store_location',
-        
+        // syncUrl: core.server + 'rider/store_sync_location',
+        // syncThreshold: 100,
         // customize post properties
         postTemplate: {
-            lat: '@latitude',
-            lon: '@longitude',
+            accuracy: "@accuracy",
+            altitude: "@altitude",
+            bearing: "@bearing",
+            latitude: "@latitude",
+            locationProvider: "@locationProvider",
+            longitude: "@longitude",
+            provider: "@provider",
+            radius: "@radius",
+            speed: "@speed",
+            time: "@time",
             driver_id: driver_id
         }
     });
@@ -42,6 +52,7 @@ function initializeMap() {
             // you need to create background task
              //setCurrentLocation(location);
              core.log('[Background Location] Location recieved');
+             core.log(location);
              storeLocationServer(location);
             // BackgroundGeolocation.startTask(function (taskKey) {
             //     // execute long running task
@@ -60,6 +71,27 @@ function initializeMap() {
         
           BackgroundGeolocation.on('stop', function() {
             console.log('[INFO] BackgroundGeolocation service has been stopped');
+          });
+          BackgroundGeolocation.on('stationary', function(stationaryLocation) {
+            // handle stationary locations here
+            console.log('[INFO] stationary');
+          });
+          BackgroundGeolocation.on('background', function() {
+            console.log('[INFO] App is in background');
+            // you can also reconfigure service (changes will be applied immediately)
+            //BackgroundGeolocation.configure({ debug: true });
+          });
+          BackgroundGeolocation.on('foreground', function() {
+            console.log('[INFO] App is in foreground');
+            //BackgroundGeolocation.configure({ debug: false });
+          });
+          BackgroundGeolocation.on('abort_requested', function() {
+            console.log('[INFO] Server responded with 285 Updates Not Required');
+         
+            // Here we can decide whether we want stop the updates or not.
+            // If you've configured the server to return 285, then it means the server does not require further update.
+            // So the normal thing to do here would be to `BackgroundGeolocation.stop()`.
+            // But you might be counting on it to receive location updates in the UI, so you could just reconfigure and set `url` to null.
           });
         BackgroundGeolocation.on('authorization', function (status) {
             console.log('[INFO] BackgroundGeolocation authorization status: ' + status);
