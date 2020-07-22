@@ -1,7 +1,14 @@
 function isPositiveInteger(r){return/^\d+$/.test(r)}
 var helpers = {
-    test: function(){
-        alert('asdasd');
+    session_expire:new Date(new Date().getTime() + 15 * 60 * 60 * 1000), // 15 hours
+    removeAllCookies: function(){
+        var kookies = Cookies.get();
+        var keys = Object.keys(kookies);
+        if(keys.length){
+            keys.forEach(function(key, i){
+                Cookies.remove(key);
+            });
+        }
     },
     getFormData:function($form){
         var unindexed_array = $form.serializeArray();

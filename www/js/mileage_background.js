@@ -1,3 +1,6 @@
+/*** PLUGIN: https://github.com/mauron85/cordova-plugin-background-geolocation ***/
+
+
 map = '';
 previousLocation = '';
 locationMarkers = [];
@@ -12,23 +15,25 @@ var mapOptions = {
 };
 function initializeMap() {
     console.log('initializeMap called')
-    var status = localStorage.getItem('isStarted');
-    var driver_id = localStorage.getItem('driver_id');
+    var status = Cookies.get('isStarted');
+    var driver_id = Cookies.get('driver_id');
     BackgroundGeolocation.configure({
-        locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
-        desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-        stationaryRadius: 5,
-        distanceFilter: 1,
-        // notificationIconColor: "#4CAF50",
+        locationProvider: BackgroundGeolocation.DISTANCE_FILTER_PROVIDER,  /** https://github.com/mauron85/cordova-plugin-background-geolocation/blob/master/PROVIDERS.md **/
+        desiredAccuracy: BackgroundGeolocation.MEDIUM_ACCURACY,
+        stationaryRadius: 1, // WORKS ON DIS PROVIDER
+        distanceFilter: 1, // WORKS ON DIS,RAW PROVIDER
+        notificationIconColor: "#4CAF50",
         notificationTitle: 'Background tracking',
         notificationText: 'Enabled',
-        debug: false,
+        debug: core.debug_mode,
         stopOnTerminate: false,
-        interval: 60000,
-        fastestInterval: 15000,
-        activitiesInterval: 60000,
-        url: core.server + 'rider/store_location',
-        // syncUrl: core.server + 'rider/store_sync_location',
+        interval: 300 * 1000,
+        fastestInterval: 10000,  // WORKS ON ACT PROVIDER
+        activitiesInterval: 30000, // WORKS ON ACT PROVIDER
+        stopOnStillActivity: false, // WORKS ON ACT PROVIDER
+        pauseLocationUpdates: false,
+        // url: core.server + 'rider/store_location',
+        syncUrl: core.server + 'rider/store_sync_location',
         // syncThreshold: 100,
         // customize post properties
         postTemplate: {
@@ -42,7 +47,7 @@ function initializeMap() {
             radius: "@radius",
             speed: "@speed",
             time: "@time",
-            driver_id: driver_id
+            driver_id: Cookies.get('driver_id')||""
         }
     });
     core.log('i m inside tracking');
@@ -53,13 +58,14 @@ function initializeMap() {
              //setCurrentLocation(location);
              core.log('[Background Location] Location recieved');
              core.log(location);
-             storeLocationServer(location);
-            // BackgroundGeolocation.startTask(function (taskKey) {
-            //     // execute long running task
-            //     // eg. ajax post location
-            //     // IMPORTANT: task has to be ended by endTask
-            //     BackgroundGeolocation.endTask(taskKey);
-            // });
+            //  storeLocationServer(location);
+            BackgroundGeolocation.startTask(function (taskKey) {
+                // execute long running task
+                // eg. ajax post location
+                // IMPORTANT: task has to be ended by endTask
+                storeLocationServer(location, taskKey);
+                
+            });
         });
 
         BackgroundGeolocation.on('error', function(error) {
@@ -98,9 +104,9 @@ function initializeMap() {
             if (status !== BackgroundGeolocation.AUTHORIZED) {
                 // we need to set delay or otherwise alert may not be shown
                 setTimeout(function () {
-                    core.confirm("Permission denied", "App requires location tracking permission. Would you like to open app settings?", function () {
-                        return BackgroundGeolocation.showAppSettings();
-                    }, function () {}, "Yes", "No");
+                    myApp.confirm('App requires location tracking permission. Would you like to open app settings?', 'Permission denied', function () {
+                        BackgroundGeolocation.showAppSettings();
+                    });
                 }, 1000);
             }else{
 
@@ -176,11 +182,11 @@ function setCurrentLocation(location) {
     }
 }
 
-function storeLocationServer(location) {
-    var driver_id = localStorage.getItem('driver_id');
+function storeLocationServer(location, taskKey=null) {
+    var driver_id = Cookies.get('driver_id');
     location.driver_id = driver_id;
     var url = 'rider/store_location';
     core.postRequest(url, location, function () {
-        
+        if(taskKey)BackgroundGeolocation.endTask(taskKey);
     },'no');
 }

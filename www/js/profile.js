@@ -10,12 +10,12 @@ var profile = {
     tableName: 'PROFILE',
 
     showSideMenuName: function () {
-        var full_name = localStorage.getItem('full_name');
-        var vehicle_number = localStorage.getItem('vehicle_number');
+        var full_name = Cookies.get('full_name')||"";
+        var vehicle_number = Cookies.get('vehicle_number')||"";
         $$('.user_profile_row h3').html(full_name);
         $('.user_profile_row .user_name').html(full_name);
         $('.user_profile_row .vehicle_number').html(vehicle_number);
-        var driver_pic = localStorage.getItem('driver_pic');
+        var driver_pic = Cookies.get('driver_pic')||"";
         if (driver_pic) {
             var url = driver_pic;
             $$('.user_profile_row img').attr('src', url);
@@ -24,12 +24,12 @@ var profile = {
 
     loadSetting: function () {
 
-        var full_name = localStorage.getItem('full_name');
-        var email = localStorage.getItem('email');
-        var restaurant_name = localStorage.getItem('restaurant_name');
-        var restaurant_address = localStorage.getItem('restaurant_address');
-        var mobile = localStorage.getItem('mobile');
-        var driver_pic = localStorage.getItem('driver_pic');
+        var full_name = Cookies.get('full_name')||"";
+        var email = Cookies.get('email')||"";
+        var restaurant_name = Cookies.get('restaurant_name')||"";
+        var restaurant_address = Cookies.get('restaurant_address')||"";
+        var mobile = Cookies.get('mobile')||"";
+        var driver_pic = Cookies.get('driver_pic')||"";
         $('input[name=full_name]').val(full_name);
         $('input[name=mobile]').val(mobile);
         $('input[name=email]').val(email);
@@ -46,7 +46,15 @@ var profile = {
     },
 
     getFromServer: function () {
-        var driver_id = localStorage.getItem('driver_id');
+        var driver_id = Cookies.get('driver_id')||"";
+        var login_status = Cookies.get(login.login_status)||"";
+        if(typeof login_status == "undefined" || login_status == "")return;
+        if(typeof driver_id == "undefined" || driver_id == ""){
+            // session expire
+            login.logout();
+            myApp.alert('Your session is expired. Please login.', 'Session expired');
+            return;
+        }
         var params = [driver_id];
         var url = 'rider/latestData';
         core.getRequest(url, params, function (response, status) {
@@ -66,9 +74,9 @@ var profile = {
         $('#profile_picture_change').val('yes');
     },
     loadMap: function () {
-        var restaurant_name = localStorage.getItem('restaurant_name');
-        var restaurant_latitude = parseFloat(localStorage.getItem('restaurant_latitude'));
-        var restaurant_longitude = parseFloat(localStorage.getItem('restaurant_longitude'));
+        var restaurant_name = Cookies.get('restaurant_name')||"";
+        var restaurant_latitude = parseFloat(Cookies.get('restaurant_latitude'))||0;
+        var restaurant_longitude = parseFloat(Cookies.get('restaurant_longitude'))||0;
         if (restaurant_latitude == '' && restaurant_longitude == '') {
             return false;
         }

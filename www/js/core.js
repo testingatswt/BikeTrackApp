@@ -1,7 +1,9 @@
 // Initialize app
-const server_url= 'http://68.183.189.31'; // like https://www.example.com
+const server_url= 'http://dev.kingriders.net'; // like https://www.example.com
 //http://68.183.189.31
 //https://kingridersapp.solutionwin.net
+//http://dev.kingriders.net
+//biketrack-dev.solutionwin.net
 
 const _server = server_url+'/api/', // api url
       _apkFileUrl=server_url+'/application/Dorbean.apk',
@@ -27,14 +29,28 @@ var myApp = new Framework7({ //
         next(resultContent);
     },
     onPageInit: function (app, page) {
-        var login_status = localStorage.getItem('auth');
+        var login_status = Cookies.get(login.login_status);
         if (login_status === true || login_status === 'true') {
 
         } else {
 //            app.loginScreen();
-            app.popup('#login-screen');
+            login.logout();
         } 
-        
+        if(page.name=="salaryslip"){
+            reports.salaryslip();
+            // Pull to refresh content
+            var $$ = Dom7;
+            var ptrContent = $$('.pull-to-refresh-content');
+            // Add 'refresh' listener on it
+            ptrContent.on('ptr:refresh', function (e) {
+
+                reports.salaryslip(function(){
+                    // When loading done, we need to reset it
+                    myApp.pullToRefreshDone();
+                });
+
+            });
+        }
     }
 });
 var $$ = Dom7;
@@ -309,6 +325,17 @@ var core = {
                     myApp.alert('Your session is expired. Please login.', 'Session expired');
                     return false;
                 }
+                switch (xhr.status) {
+                    case 400:
+                    case 505:
+                    case 403:
+                         // server side error
+                        myApp.alert('A server side error occurs. Please contact the admin', 'Error');
+                        break;
+                
+                    default:
+                        break;
+                }
                 callback(error, 'error');
             });
 
@@ -357,10 +384,18 @@ var core = {
                    myApp.alert('Your session is expired. Please login.', 'Session expired');
                    return false;
                 }
-                if(xhr.status===400){ // server side error
-                    myApp.alert('A server side error occurs. Please contact the admin', 'Error');
+                switch (xhr.status) {
+                    case 400:
+                    case 505:
+                    case 403:
+                         // server side error
+                        myApp.alert('A server side error occurs. Please contact the admin', 'Error');
+                        break;
+                
+                    default:
+                        break;
                 }
-                callback(JSON.stringify(data), 'error');
+                callback(null, 'error');
             });
         } else {
             callback('', 'offline');
@@ -383,7 +418,7 @@ var core = {
             if (typeof page_center == 'undefined' || page_center == 'exit') {
                 navigator.app.exitApp();
             } else {
-                var login_status = localStorage.getItem('login_status');
+                var login_status = Cookies.get(login.login_status);
                 if (login_status === true || login_status === 'true') {
                     e.preventDefault();
                     mainView.router.back({
@@ -400,7 +435,10 @@ var core = {
     },
     onResume: function () {
         core.app_state = 'active';
+        reports.checkIfStartRiding('#btn--working');
+        
         core.checkForUpdate();
+        profile.getFromServer();
     },
     alert: function (title, message, button_label, callback) {
 
@@ -519,7 +557,7 @@ var core = {
         window.open(url, "_system", 'location=no,toolbar=no');
     },
     getProfileImagePath: function (callback) {
-        var image_name = localStorage.getItem('agent_image');
+        var image_name = Cookies.get('agent_image');
         var img_url = '';
         if (image_name) {
             img_url = core.server + 'upload/' + image_name;
@@ -549,4 +587,6 @@ $(".ext-link").on("click", function () {
         }
     }
 });
+
+
 

@@ -21,25 +21,29 @@ var app = {
         core.onResume();
         if (core.isOnline()) {
 //            push.startNotification();
+            initializeMap();
         }
+
 
         
         if (core.isOnline()) {
-            var login_status = localStorage.getItem(login.login_status);
+            var login_status = Cookies.get(login.login_status);
             if (login_status === true || login_status === 'true') {
                 //app.startLocationTracking();
             }
             
         }
         profile.showSideMenuName();
+        login.inputMask();
+        login.fillData();
     },
     checkLogin: function (callback) {
         $$('body').removeClass('tailor_wrapper');
         $$('body').removeClass('user_wrapper');
-        var login_status = localStorage.getItem(login.login_status);
+        var login_status = Cookies.get(login.login_status);
        
         if (login_status === true || login_status === 'true') {
-            core.user_id = localStorage.getItem('user_id');
+            core.user_id = Cookies.get('user_id');
             callback(true);
         } else {
             mainView.router.loadPage('templates/login-screen-page.html');
@@ -52,7 +56,7 @@ var app = {
         //     maps.show_map('mapcanvas');
         // });
         
-        // var status = localStorage.getItem('isStarted');
+        // var status = Cookies.get('isStarted');
         // if(status == true || status == 'true'){
         //     $('.online_status').prop('checked',true);
         // }
@@ -61,24 +65,53 @@ var app = {
         
     },
     setSession: function (data) {
-        localStorage.setItem(login.login_status, true);
+        Cookies.set(login.login_status, true, {expires: helpers.session_expire});
         app.saveSession(data);
     },
     saveSession: function (result) {
-        localStorage.setItem('user_id', result.user_id);
-        localStorage.setItem('driver_id', result.rider_id);
-        localStorage.setItem('full_name', result.full_name);
-        localStorage.setItem('mobile', result.mobile);
-        localStorage.setItem('email', result.email);
-        localStorage.setItem('driver_pic', result.driver_pic);
-        localStorage.setItem('vehicle_number', result.vehicle_number);
-        localStorage.setItem('restaurant_address', result.restaurant_address);
-        localStorage.setItem('restaurant_name', result.restaurant_name);
-        localStorage.setItem('restaurant_latitude', result.restaurant_latitude);
-        localStorage.setItem('restaurant_longitude', result.restaurant_longitude);
+        Cookies.set('user_id', result.user_id, {expires:helpers.session_expire});
+        Cookies.set('driver_id', result.rider_id, {expires:helpers.session_expire});
+        Cookies.set('full_name', result.full_name, {expires:helpers.session_expire});
+        Cookies.set('mobile', result.mobile, {expires:helpers.session_expire});
+        Cookies.set('email', result.email, {expires:helpers.session_expire});
+        Cookies.set('driver_pic', result.driver_pic, {expires:helpers.session_expire});
+        Cookies.set('vehicle_number', result.vehicle_number, {expires:helpers.session_expire});
+        Cookies.set('restaurant_address', result.restaurant_address, {expires:helpers.session_expire});
+        Cookies.set('restaurant_name', result.restaurant_name, {expires:helpers.session_expire});
+        Cookies.set('restaurant_latitude', result.restaurant_latitude, {expires:helpers.session_expire});
+        Cookies.set('restaurant_longitude', result.restaurant_longitude, {expires:helpers.session_expire});
         profile.showSideMenuName();
         profile.loadSetting();
         profile.loadMap();
+
+        if(result.report){
+            Cookies.set('riding_start_time',  new Date(result.report.start_time+" UTC"), {expires: helpers.session_expire});
+            Cookies.set('starting_location',  result.report.started_location, {expires: helpers.session_expire});
+        }
+        else{
+            // stop working if started
+            var isRidingStarted = Cookies.get("isRidingStarted")||"";
+            if(typeof isRidingStarted === "undefined" || isRidingStarted=="") isRidingStarted = false;
+            if(isRidingStarted==="true" || isRidingStarted === true){
+                //end it
+                myApp.showPreloader("Syncing locations...");
+
+                maps.start_background_location(false);
+                BackgroundGeolocation.forceSync(function(){
+                    myApp.hidePreloader();
+                });
+                Cookies.remove("isRidingStarted");
+                Cookies.remove("riding_start_time");
+                Cookies.remove("starting_location");
+                $('#btn--working').text('Start day');
+                Cookies.remove('isStarted');
+                $('.online_status').prop('checked', false);
+                clearInterval(timeInterval_Timer);
+                timeInterval_Selector.hide();
+                myApp.closeModal();
+            }
+        }
+        
     },
     
 };

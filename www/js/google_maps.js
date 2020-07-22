@@ -31,6 +31,13 @@ var maps = {
             callback(null,current_loc);
         },
         function (error) {
+            if(error.message=="Illegal Access"){
+                //need access
+                myApp.confirm('App requires location tracking permission. Would you like to open app settings?', 'Permission denied', function () {
+                    BackgroundGeolocation.showAppSettings();
+                });
+                return;
+            }
             callback(error, null);
         }
         ,{timeout: 5000});
@@ -105,21 +112,21 @@ var maps = {
     
     changeTrackingStatus: function () { 
         var _isChecked = document.getElementById('online_status').checked;
-        // var status = localStorage.getItem('isStarted');
+        // var status = Cookies.get('isStarted');
         if(_isChecked){
             maps.sendStatus(1); // online
         }else{
             maps.sendStatus(2); //offline
         }
-        localStorage.setItem('isStarted', _isChecked);
+        Cookies.set('isStarted', _isChecked, {expires: helpers.session_expire});
         //app.startLocationTracking();
     },
-    sendStatus: function (status) {
-        var driver_id = localStorage.getItem('driver_id');
+    sendStatus: function (status, driver_id=Cookies.get('driver_id')||"", taskKey=null) {
+        if(driver_id=="")return;
         var login_data = {rider_id : driver_id, status: status};
         var url = "rider/changeStatus";
         core.postRequest(url, login_data, function (response, status) {
-            
+            if(taskKey)BackgroundGeolocation.endTask(taskKey);
         });
     },
     calculateAndDisplayRoute:function(directionsService, directionsDisplay, origin, destination){

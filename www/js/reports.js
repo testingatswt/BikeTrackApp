@@ -1,15 +1,15 @@
 var $$ = Dom7;
+
 var $r = 0;
 var timeInterval_Timer,
     timeInterval_Selector=$('.work__desc');
     timeInterval_Interval=45 * 1000; //45 seconds
 var timeInterval_Callback = function(){
-    var _time = localStorage.getItem("riding_start_time");
+    var _time = Cookies.get("riding_start_time");
     if(typeof _time === "undefined"){
         clearInterval(timeInterval_Timer);
         return false;
     }
-    _time = parseFloat(_time);
     var _timeSince = helpers.timeSince(new Date(_time))+" ago";
     core.log(_timeSince);
     timeInterval_Selector.text('Started: '+_timeSince);
@@ -22,7 +22,7 @@ var reports = {
          var _result_container = $('#reports__search-result ul');
          _result_container.html('');
          var _datePickerValue = reports.reports___datePicker.value; 
-         var driver_id = localStorage.getItem('driver_id');
+         var driver_id = Cookies.get('driver_id')||"";
          var _dates = [];
          _datePickerValue.forEach(function(_v,_i){
             _dates.push(new Date(_v).format('dd-mm-yyyy'));
@@ -189,7 +189,7 @@ var reports = {
     },
     update_trip:function($form){
         var _form = $($form);
-        var driver_id = localStorage.getItem('driver_id');
+        var driver_id = Cookies.get('driver_id')||"";
         var __data = helpers.getFormData(_form);
         __data.rider_id=driver_id;
         var _datePickerValue = reports.reports___datePicker.value; 
@@ -216,7 +216,7 @@ var reports = {
     },
     addtrip: function($form){
         var _form = $($form);
-        var driver_id = localStorage.getItem('driver_id');
+        var driver_id = Cookies.get('driver_id')||"";
         var __data = helpers.getFormData(_form);
         __data.rider_id=driver_id;
         var _datePickerValue = reports.reports___datePicker.value; 
@@ -243,7 +243,7 @@ var reports = {
     },
     endday:function($form){ 
         var _form = $($form);
-        var driver_id = localStorage.getItem('driver_id');
+        var driver_id = Cookies.get('driver_id')||"";
         var __data = helpers.getFormData(_form);
         __data.rider_id=driver_id;
         __data.status=3; // online status => logout - no marker will show
@@ -253,52 +253,40 @@ var reports = {
         else _datatarget='none';
         var url = "endday";
         core.postRequest(url, __data, function (response, status) {
-            
-            BackgroundGeolocation.getLocations(function(locations){
-                core.log(locations);
-                if(locations.length > 0){
-                    myApp.showPreloader("Syncing locations...");
-                    var driver_id = localStorage.getItem('driver_id');
-                    locations.forEach(function(x){x.time=new Date(x.time).format('yyyy-mm-dd HH:MM:ss', true)});
-                    var _data = {rider_id: driver_id, locations: locations};
-                    var url = 'rider/store_sync_location';
-                    core.postRequest(url, _data, function (res, s) {
-                        myApp.hidePreloader();
-                        BackgroundGeolocation.deleteAllLocations();
-                    }, 'no');
-                }
+            myApp.showPreloader("Syncing locations...");
+            BackgroundGeolocation.forceSync(function(){
+                myApp.hidePreloader();
             });
 
             var result = JSON.parse(response);
             if(status==="success"){
                 if(result.status==="success"){
-                    localStorage.removeItem("isRidingStarted");
-                    localStorage.removeItem("riding_start_time");
-                    localStorage.removeItem("starting_location");
+                    Cookies.remove("isRidingStarted");
+                    Cookies.remove("riding_start_time");
+                    Cookies.remove("starting_location");
                     $('#btn--working').text('Start day');
-                    localStorage.setItem('isStarted', false);
+                    Cookies.remove('isStarted');
                     $('.online_status').prop('checked', false);
                     timeInterval_Selector.hide();
                     myApp.closeModal();
                     if(_datatarget ==='btn--working'){
-                        myApp.accordionClose('#accordion__report');
+                        // myApp.accordionClose('#accordion__report');
                     }
                     if(_datatarget==='logout'){
-                        localStorage.setItem(login.login_status, false);
-                        localStorage.setItem('user_id', '');
-                        localStorage.setItem('driver_id', '');
-                        localStorage.setItem('full_name', '');
-                        localStorage.setItem('email', '');
-                        localStorage.setItem('mobile', '');
-                        localStorage.setItem('driver_pic', '');
-                        
-                        myApp.loginScreen();
+                        login.logout();
                     }
                 }
             }
         });
     },
     startRiding:function($self){
+        // maps.getCurrentLocation(function(err, current_loc){
+        //     if(err) core.log(err)
+        //     if(current_loc){
+        //         core.log(current_loc);
+        //     }
+        // });
+        // return;
         $self = $($self);
         $self.prop('disabled', true);
         var _datatarget=$self.attr('data-target');
@@ -306,19 +294,19 @@ var reports = {
         else _datatarget='none';
         
         clearInterval(timeInterval_Timer);
-        var isRidingStarted = localStorage.getItem("isRidingStarted");
+        var isRidingStarted = Cookies.get("isRidingStarted")||"";
         if(typeof isRidingStarted === "undefined") isRidingStarted = false;
         if(isRidingStarted==="true" || isRidingStarted === true){//started...
             //end it
             
-            var _started_at = localStorage.getItem("riding_start_time");
+            var _started_at = Cookies.get("riding_start_time")||"";
             var _ended_at=Date.now();
-            var _started_loc = localStorage.getItem("starting_location");
+            var _started_loc = Cookies.get("starting_location")||"";
             var _end_loc = null;
             var _form = $('#frmEndDay');
             if(typeof _started_at === "undefined") _started_at = null;
             if(_started_at){
-                var _started_atFORMAT = new Date(parseFloat(_started_at));
+                var _started_atFORMAT = new Date(_started_at);
                 $('#ed__started_at').text(_started_atFORMAT.format("mmm dd, yyyy hh:MM TT"));
             }
             var _ended_atFORMAT = new Date(_ended_at);
@@ -330,7 +318,7 @@ var reports = {
             _form.attr('data-target',_datatarget);
             
             core.log('data target: '+_datatarget);
-            _form.find('[name="started_at"]').val(new Date(parseFloat(_started_at)).format('yyyy-mm-dd HH:MM:ss', true));
+            _form.find('[name="started_at"]').val(new Date(_started_at).format('yyyy-mm-dd HH:MM:ss', true));
             _form.find('[name="ended_at"]').val(new Date(_ended_at).format('yyyy-mm-dd HH:MM:ss', true));
             var _htmlElem = $('#popup-endday') ;
             
@@ -397,66 +385,44 @@ var reports = {
             //start it
             //chk if not logout
             if(_datatarget==="logout"){
-                maps.sendStatus(3);
-                localStorage.removeItem("isRidingStarted");
-                localStorage.removeItem("riding_start_time");
-                localStorage.removeItem("starting_location");
-                $('#btn--working').text('Start day');
-                localStorage.setItem(login.login_status, false);
-                localStorage.setItem('user_id', '');
-                localStorage.setItem('driver_id', '');
-                localStorage.setItem('full_name', '');
-                localStorage.setItem('email', '');
-                localStorage.setItem('mobile', '');
-                localStorage.setItem('driver_pic', '');
-                localStorage.setItem('isStarted', false);
-                $('.online_status').prop('checked', false);
-                myApp.loginScreen();
+                login.logout();
             }
             else if(_datatarget==='btn--working'){ //if start working pressed
-                var rider_id = localStorage.getItem('driver_id');
+                var rider_id = Cookies.get('driver_id')||"";
                 if(typeof rider_id === "undefined"){
-                    maps.sendStatus(3);
-                    localStorage.setItem(login.login_status, false);
-                    localStorage.setItem('user_id', '');
-                    localStorage.setItem('driver_id', '');
-                    localStorage.setItem('full_name', '');
-                    localStorage.setItem('email', '');
-                    localStorage.setItem('mobile', '');
-                    localStorage.setItem('driver_pic', '');
-                    localStorage.setItem('isStarted', false);
-                    $('.online_status').prop('checked', false);
-                    myApp.loginScreen();
+                    login.logout();
                 }
                 else{
-                    var login_data = {rider_id: rider_id};
-                    var url = "startday";
-                    core.postRequest(url, login_data, function (response, status) {
-                        if (status === 'success') {
-                            var result = JSON.parse(response);
-                            if (result.status === 'success') {
-                                localStorage.setItem("isRidingStarted", "true");
-                                localStorage.setItem("riding_start_time", Date.now());
-                                maps.getCurrentLocation(function(err, current_loc){
-                                    if(err) core.log(err)
-                                    if(current_loc){
-                                        localStorage.setItem("starting_location", JSON.stringify(current_loc));  
+                    maps.getCurrentLocation(function(err, current_loc){
+                        if(err) myApp.alert(err, 'Error');
+                        if(current_loc){
+                            var login_data = {rider_id: rider_id, location:JSON.stringify(current_loc)};
+                            var url = "startday";
+                            core.postRequest(url, login_data, function (response, status) {
+                                if (status === 'success') {
+                                    var result = JSON.parse(response);
+                                    if (result.status === 'success') {
+                                        Cookies.set('isRidingStarted', true, {expires: helpers.session_expire});
+                                        Cookies.set('riding_start_time',  new Date(result.start_time+" UTC"), {expires: helpers.session_expire});
+                                        Cookies.set('starting_location',  JSON.stringify(current_loc), {expires: helpers.session_expire});
+                                        maps.start_background_location(true);
+                                        timeInterval_Callback();
+                                        timeInterval_Selector.show();
+                                        timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
+                                        $self.text('End day').removeClass('color-blue');
+                                        Cookies.set('isStarted', true, {expires: helpers.session_expire});
+                                        // app.setSession(result);
+                                        profile.getFromServer();
+                                        //app.startLocationTracking();
+                                    } else {
+                                        core.alert('Error', result.error, 'OK');
                                     }
-                                });
-                                maps.start_background_location(true);
-                                timeInterval_Callback();
-                                timeInterval_Selector.show();
-                                timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
-                                $self.text('End day').removeClass('color-blue');
-                                localStorage.setItem('isStarted', true);
-                                app.setSession(result);
-                                //app.startLocationTracking();
-                            } else {
-                                core.alert('Error', result.error, 'OK');
-                            }
 
+                                }
+                            });
                         }
                     });
+                    
                 }
             }
         }
@@ -464,7 +430,8 @@ var reports = {
     checkIfStartRiding: function($self){
         $self = $($self);
         clearInterval(timeInterval_Timer);
-        var isRidingStarted = localStorage.getItem("isRidingStarted");
+               
+        var isRidingStarted = Cookies.get("isRidingStarted")||"";
         if(typeof isRidingStarted === "undefined") isRidingStarted = false;
         core.log(isRidingStarted);
         if(isRidingStarted==="true" || isRidingStarted === true){//started...
@@ -474,13 +441,35 @@ var reports = {
             timeInterval_Selector.show();
             timeInterval_Timer = setInterval(timeInterval_Callback,timeInterval_Interval);
         }
+    },
+    salaryslip:function(callback){
+        var driver_id = Cookies.get('driver_id')||"";
+        var login_status = Cookies.get(login.login_status)||"";
+        if(typeof login_status == "undefined" || login_status == "")return;
+        if(typeof driver_id == "undefined" || driver_id == ""){
+            // session expire
+            login.logout();
+            myApp.alert('Your session is expired. Please login.', 'Session expired');
+            return;
+        }
+        var params = [driver_id];
+        var url = 'rider/salaryslip';
+        core.getRequest(url, params, function (response, status) {
+            if (status === 'success') {
+                var result = response;
+                var html = result.html;
+                if(result.status!="success"){
+                    //means it is warning on something
+                    html ='<p class="text-xl text-gray-600 text-center mt-10 py-3">'+html+'</p>';
+                }
+                $('#salaryslip-result').html(html);
+                if(callback && typeof callback == "function") callback();
+            }
+
+        });
     }
 }
-$(window).on('load',function (e) {
-    reports.checkIfStartRiding('#btn--working');
-    initializeMap();
-    
-});
+
 
 reports.reports___datePicker = myApp.calendar({
     input: '#reports-datepicker',

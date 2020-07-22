@@ -28,9 +28,11 @@ login = {
                     var result = JSON.parse(response);
                     
                     if (result.status === 'success') {
+                        //store emirate id in local storage so next time if will load from cache
+                        localStorage.setItem('emirate_id', email);
                         $$('.login_form .email').val('');
                         $$('.login_form .password').val('');
-                        localStorage.setItem('isStarted', true); 
+                        Cookies.set('isStarted', true, {expires: helpers.session_expire}); 
                         myApp.closeModal('.login-screen')
                         app.setSession(result);
                         //app.startLocationTracking();
@@ -81,35 +83,31 @@ login = {
         }
     },
 
-    changePassword: function () {
+    changePassword: function ($form) {
         if (core.isOnline()) {
-            var forgot_password = $$('.change_password_form .forgot_password').val();
-            var password = $('.change_password_form .password').val();
-            var repeat_password = $('.change_password_form .repeat_password').val();
+            var current_password = $$($form).find('[name="current"]').val().trim();
+            var password = $$($form).find('[name="new"]').val().trim();
+            var repeat_password = $$($form).find('[name="confirm"]').val().trim();
 
+            if (current_password === '') {
+                myApp.alert('Current Password required', 'Error');
+                return;
+            }
             if (password === '') {
-                core.alert('Error', 'Password required', 'OK', function () {
-                    return;
-                });
+                myApp.alert('Password required', 'Error');
                 return;
             }
             if (repeat_password === '') {
-                core.alert('Error', 'Repeat Password required', 'OK', function () {
-                    return;
-                });
+                myApp.alert('Confirm Password required', 'Error');
                 return;
             }
 
             if (password !== repeat_password) {
-                $$('input[id=repeat_password]').addClass('empty');
-                core.alert('Error',
-                        "Repeat passwords don't match. Try again?",
-                        'OK',
-                        function () {
-                            return;
-                        });
+                $$($form).find('[name="confirm"]').val('');
+                myApp.alert('Confirm Password required', 'Error');
                 return;
             }
+            return;
 
             var login_data = {forgot_password: forgot_password, password: password};
             var url = "login.php/change_password";
@@ -142,17 +140,36 @@ login = {
 
     logout: function () {
         myApp.closeModal();
-        maps.sendStatus(3);
-        localStorage.setItem(login.login_status, false);
-        localStorage.setItem('user_id', '');
-        localStorage.setItem('driver_id', '');
-        localStorage.setItem('full_name', '');
-        localStorage.setItem('email', '');
-        localStorage.setItem('mobile', '');
-        localStorage.setItem('driver_pic', '');
-        localStorage.setItem('isStarted', false);
+        var drive_id = Cookies.get('driver_id')||"";
+        BackgroundGeolocation.startTask(function (taskKey) {
+            // execute long running task
+            // eg. ajax post location
+            // IMPORTANT: task has to be ended by endTask
+            
+            maps.sendStatus(2, drive_id, taskKey);
+            
+        });
+        helpers.removeAllCookies();
+        $('#btn--working').text('Start day');
         $('.online_status').prop('checked', false);
         //app.startLocationTracking();
         myApp.loginScreen();
+        maps.start_background_location(false);
+
+        login.fillData();
     },
+    inputMask:function(){
+        var input = $('#login-screen [name="email"]');
+        login.IMask=IMask(
+            input[0], {
+            mask: '000-0000-0000000-0'
+        });
+    },
+    IMask:null,
+    fillData:function(){
+        var emirate_id = localStorage.getItem('emirate_id');
+        if(emirate_id){
+            $('#login-screen [name="email"]').val(emirate_id);
+        }
+    }
 };
